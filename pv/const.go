@@ -1,7 +1,7 @@
 package pv
 
 const (
-	PackageName       = "kube/pvc"
+	PackageName       = "kube/pv"
 	DefaultConfigFile = "config.json"
 	DefaultConfigDir  = ".config/" + PackageName
 )

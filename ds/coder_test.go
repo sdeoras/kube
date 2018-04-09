@@ -37,7 +37,6 @@ func TestNewCoder(t *testing.T) {
 
 	// config init
 	key := "4d415f93-0a19-4037-839e-00bd7b049eae"
-	config := new(Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)
 	if err != nil {
@@ -48,7 +47,7 @@ func TestNewCoder(t *testing.T) {
 	// initialize new kube coder
 	// key is needed because coder works with a config manager to retrieve config data
 	// and config manager requires a key to pull config data from the backend
-	coder := NewCoder(config.Key(), nameSpace, globalCtx)
+	coder := NewCoder(key, nameSpace, globalCtx)
 	if err := coder.Init(clientset, configManager); err != nil {
 		log.Error(err)
 		t.Fatal(err)
