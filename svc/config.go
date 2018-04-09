@@ -1,4 +1,4 @@
-package pv
+package svc
 
 import (
 	"encoding/json"
@@ -6,14 +6,14 @@ import (
 	"k8s.io/api/core/v1"
 )
 
-// Config wraps v1.PersistentVolumeClaim so that it can be managed using configio
+// Config wraps v1.Svc so that it can be managed using configio
 type Config struct {
-	key              string
-	PersistentVolume *v1.PersistentVolume
+	key string
+	Svc *v1.Service
 }
 
 func (conf *Config) Init(key string) *Config {
-	conf.PersistentVolume = new(v1.PersistentVolume)
+	conf.Svc = new(v1.Service)
 	conf.key = key
 	return conf
 }

@@ -1,4 +1,4 @@
-package pv
+package pvc
 
 import (
 	"encoding/json"
@@ -8,12 +8,12 @@ import (
 
 // Config wraps v1.PersistentVolumeClaim so that it can be managed using configio
 type Config struct {
-	key              string
-	PersistentVolume *v1.PersistentVolume
+	key                   string
+	PersistentVolumeClaim *v1.PersistentVolumeClaim
 }
 
 func (conf *Config) Init(key string) *Config {
-	conf.PersistentVolume = new(v1.PersistentVolume)
+	conf.PersistentVolumeClaim = new(v1.PersistentVolumeClaim)
 	conf.key = key
 	return conf
 }

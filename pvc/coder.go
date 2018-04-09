@@ -1,4 +1,4 @@
-package pv
+package pvc
 
 import (
 	"context"
@@ -10,9 +10,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// coder implements kube.Coder interface for a pv
+// coder implements kube.Coder interface for a pvc
 type coder struct {
 	key       string
+	namespace string
 	config    *Config
 	clientset *kubernetes.Clientset
 	ctx       context.Context
@@ -21,46 +22,46 @@ type coder struct {
 	log       *logrus.Entry
 }
 
-func (m *coder) Kind() kube.Kind {
-	return kube.KindOfPv
+func (cdr *coder) Kind() kube.Kind {
+	return kube.KindOfPvc
 }
 
-func (m *coder) Context() context.Context {
-	return m.ctx
+func (cdr *coder) Context() context.Context {
+	return cdr.ctx
 }
 
-func (m *coder) Error() string {
-	return m.err.Error()
+func (cdr *coder) Error() string {
+	return cdr.err.Error()
 }
 
-func (m *coder) Init(clientset *kubernetes.Clientset, configReader configio.ConfigReader) error {
+func (cdr *coder) Init(clientset *kubernetes.Clientset, configReader configio.ConfigReader) error {
 
-	config := new(Config).Init(m.key)
+	config := new(Config).Init(cdr.key)
 	if err := configReader.Unmarshal(config); err != nil {
 		return err
 	} else {
-		m.config = config
+		cdr.config = config
 	}
 
-	m.clientset = clientset
+	cdr.clientset = clientset
 
-	m.log = logrus.WithField("package", "kube/pv")
+	cdr.log = logrus.WithField("package", PackageName)
 
 	return nil
 }
 
-func (m *coder) Create(ctx context.Context) context.Context {
-	log := m.log.WithField("func", "Create")
+func (cdr *coder) Create(ctx context.Context) context.Context {
+	log := cdr.log.WithField("func", "Create")
 	out := context.Background()
 	out, done := context.WithCancel(out)
 
 	go func(input context.Context, done context.CancelFunc) {
 		select {
 		case <-input.Done():
-			if _, err := m.clientset.CoreV1().PersistentVolumes().Create(m.config.PersistentVolume); err != nil {
+			if _, err := cdr.clientset.CoreV1().PersistentVolumeClaims(cdr.namespace).Create(cdr.config.PersistentVolumeClaim); err != nil {
 				log.Error(err)
-				m.err = err
-				m.cancel()
+				cdr.err = err
+				cdr.cancel()
 				log.Info("self context cancelled")
 				return
 			} else {
@@ -68,7 +69,7 @@ func (m *coder) Create(ctx context.Context) context.Context {
 				done()
 				return
 			}
-		case <-m.ctx.Done():
+		case <-cdr.ctx.Done():
 			log.Info("self context done")
 			return
 		}
@@ -77,8 +78,8 @@ func (m *coder) Create(ctx context.Context) context.Context {
 	return out
 }
 
-func (m *coder) Delete(ctx context.Context) context.Context {
-	log := m.log.WithField("func", "Delete")
+func (cdr *coder) Delete(ctx context.Context) context.Context {
+	log := cdr.log.WithField("func", "Delete")
 	out := context.Background()
 	out, done := context.WithCancel(out)
 
@@ -86,10 +87,10 @@ func (m *coder) Delete(ctx context.Context) context.Context {
 		select {
 		case <-parent.Done():
 			options := new(meta_v1.DeleteOptions)
-			if err := m.clientset.CoreV1().PersistentVolumes().Delete(m.config.PersistentVolume.Name, options); err != nil {
+			if err := cdr.clientset.CoreV1().PersistentVolumeClaims(cdr.namespace).Delete(cdr.config.PersistentVolumeClaim.Name, options); err != nil {
 				log.Error(err)
-				m.err = err
-				m.cancel()
+				cdr.err = err
+				cdr.cancel()
 				log.Info("self context cancelled")
 				return
 			} else {
@@ -97,7 +98,7 @@ func (m *coder) Delete(ctx context.Context) context.Context {
 				f()
 				return
 			}
-		case <-m.ctx.Done():
+		case <-cdr.ctx.Done():
 			log.Info("self context done")
 			return
 		}

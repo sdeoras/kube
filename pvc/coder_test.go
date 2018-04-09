@@ -1,4 +1,4 @@
-package pv
+package pvc
 
 import (
 	"context"
@@ -21,6 +21,7 @@ func TestNewCoder(t *testing.T) {
 	defer cancel()
 
 	// kubernetes clientset init
+	nameSpace := "default"
 	var clientset *kubernetes.Clientset
 	kubeConfigFile := filepath.Join(os.Getenv("HOME"), ".kube", "config")
 	// use the current context in kubeconfig
@@ -35,7 +36,7 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// config init
-	key := "b773bde3-e73b-4914-8fac-3513ca76a596"
+	key := "e614bfad-436e-4e26-b6b5-41384f2260e6"
 	config := new(Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)
@@ -47,7 +48,7 @@ func TestNewCoder(t *testing.T) {
 	// initialize new kube coder
 	// key is needed because coder works with a config manager to retrieve config data
 	// and config manager requires a key to pull config data from the backend
-	coder := NewCoder(config.Key(), globalCtx)
+	coder := NewCoder(config.Key(), nameSpace, globalCtx)
 	if err := coder.Init(clientset, configManager); err != nil {
 		log.Error(err)
 		t.Fatal(err)
