@@ -23,7 +23,7 @@ type coder struct {
 }
 
 func (cdr *coder) Kind() kube.Kind {
-	return kube.KindOfPvc
+	return kube.KindOfSvc
 }
 
 func (cdr *coder) Context() context.Context {

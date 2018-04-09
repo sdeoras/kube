@@ -1,4 +1,4 @@
-package pods
+package jobs
 
 import (
 	"context"
@@ -23,7 +23,7 @@ type coder struct {
 }
 
 func (cdr *coder) Kind() kube.Kind {
-	return kube.KindOfPod
+	return kube.KindOfJob
 }
 
 func (cdr *coder) Context() context.Context {
@@ -58,7 +58,7 @@ func (cdr *coder) Create(ctx context.Context) context.Context {
 	go func(input context.Context, done context.CancelFunc) {
 		select {
 		case <-input.Done():
-			if _, err := cdr.clientset.CoreV1().Pods(cdr.namespace).Create(cdr.config.Pod); err != nil {
+			if _, err := cdr.clientset.BatchV1().Jobs(cdr.namespace).Create(cdr.config.Job); err != nil {
 				log.Error(err)
 				cdr.err = err
 				cdr.cancel()
@@ -87,7 +87,7 @@ func (cdr *coder) Delete(ctx context.Context) context.Context {
 		select {
 		case <-parent.Done():
 			options := new(meta_v1.DeleteOptions)
-			if err := cdr.clientset.CoreV1().Pods(cdr.namespace).Delete(cdr.config.Pod.Name, options); err != nil {
+			if err := cdr.clientset.BatchV1().Jobs(cdr.namespace).Delete(cdr.config.Job.Name, options); err != nil {
 				log.Error(err)
 				cdr.err = err
 				cdr.cancel()
