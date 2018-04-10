@@ -1,3 +1,4 @@
+// pods implements kube.Coder interface for deployment of pods
 package pods
 
 import (

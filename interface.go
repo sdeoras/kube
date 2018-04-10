@@ -1,3 +1,6 @@
+// kube defines interface for k8s object deployment API.
+// The intent is to keep this interface as small as possible.
+// This is work in progress and API may change.
 package kube
 
 import (

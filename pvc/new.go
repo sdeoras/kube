@@ -1,3 +1,4 @@
+// pvc implements kube.Coder interface for deployment of persistent volume claims
 package pvc
 
 import (

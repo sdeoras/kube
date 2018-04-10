@@ -1,3 +1,4 @@
+// ds implements kube.Coder interface for deployment of daemon set
 package ds
 
 import (

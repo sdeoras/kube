@@ -1,3 +1,4 @@
+// jobs implements kube.Coder interface for deployment of jobs
 package jobs
 
 import (

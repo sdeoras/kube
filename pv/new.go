@@ -1,3 +1,4 @@
+// pv implements kube.Coder interface for deployment of persistent volumes
 package pv
 
 import (

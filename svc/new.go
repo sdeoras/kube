@@ -1,3 +1,4 @@
+// svc implements kube.Coder interface for deployment of services
 package svc
 
 import (
