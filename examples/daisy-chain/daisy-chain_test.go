@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"sync"
+
 	"github.com/sdeoras/configio/configfile"
 	"github.com/sdeoras/kube"
 	"github.com/sdeoras/kube/ds"
@@ -47,6 +49,7 @@ func TestDaisyChain(t *testing.T) {
 	// note, that it is being used to trigger action when it _ends_
 	// i.e., when startTrigger() is called, so it is best to init it with context.Background()
 	trigger, startTrigger := context.WithCancel(context.Background())
+	onErrTrigger, onErrStartTrigger := context.WithCancel(context.Background())
 
 	// kubernetes clientset init
 	var clientset *kubernetes.Clientset
@@ -158,14 +161,44 @@ func TestDaisyChain(t *testing.T) {
 		trigger = coders[i].Delete(trigger)
 	}
 
+	// shutdown all if error occurs
+	var wg sync.WaitGroup
+	for _, coder := range coders {
+		coder := coder
+		go func(coder kube.Coder) {
+			wg.Add(1)
+			<-coder.Delete(onErrTrigger).Done()
+			wg.Done()
+		}(coder)
+	}
+
+	cleanup := make(chan struct{})
+	go func() {
+		wg.Wait()
+		cleanup <- struct{}{}
+	}()
+
 	// send trigger to initiate k8s actions
 	startTrigger()
 
 	// wait for various events
 	// at least one of them will surely happen
 	select {
+	// at least one of the coder errors out
 	case err := <-errChan:
+		// in which case trigger cleanup
+		onErrStartTrigger()
+		// and wait for cleanup done
+		select {
+		// either cleanup succeeds
+		case <-cleanup:
+			log.Info("all cleanup done")
+			// of global context is over
+		case <-globalCtx.Done():
+			log.Error("global context cancelled")
+		}
 		log.Fatal(err)
+		// everything completes successfully
 	case <-trigger.Done():
 		log.Info("all done")
 	case <-done:
