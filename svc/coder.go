@@ -3,7 +3,9 @@ package svc
 import (
 	"context"
 
-	"github.com/sdeoras/configio"
+	"os"
+	"path/filepath"
+
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -22,6 +24,10 @@ type coder struct {
 	log       *logrus.Entry
 }
 
+func GetDefaultConfigFile() string {
+	return filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
+}
+
 func (cdr *coder) Kind() kube.Kind {
 	return kube.KindOfSvc
 }
@@ -34,20 +40,10 @@ func (cdr *coder) Error() string {
 	return cdr.err.Error()
 }
 
-func (cdr *coder) Init(clientset *kubernetes.Clientset, configReader configio.ConfigReader) error {
-
-	config := new(Config).Init(cdr.key)
-	if err := configReader.Unmarshal(config); err != nil {
-		return err
-	} else {
-		cdr.config = config
-	}
-
+func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
 	cdr.clientset = clientset
-
-	cdr.log = logrus.WithField("package", PackageName)
-
-	return nil
+	cdr.namespace = namespace
+	cdr.log = logrus.WithField("package", PackageName).WithField("namespace", cdr.namespace)
 }
 
 func (cdr *coder) Create(ctx context.Context) context.Context {

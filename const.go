@@ -8,3 +8,7 @@ const (
 	KindOfJob Kind = "job"
 	KindOfDs  Kind = "daemonset"
 )
+
+const (
+	NamespaceDefault = "default"
+)

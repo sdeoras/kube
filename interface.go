@@ -3,7 +3,6 @@ package kube
 import (
 	"context"
 
-	"github.com/sdeoras/configio"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -14,8 +13,8 @@ type Coder interface {
 	Kind() Kind
 	//Context returns context
 	Context() context.Context
-	// Init initializes object based on config read from config reader
-	Init(clientset *kubernetes.Clientset, configReader configio.ConfigReader) error
+	// Clientset points to a kube clientset and a namespace
+	Clientset(clientset *kubernetes.Clientset, namespace string)
 	// Create deploys after receiving done signal from input context
 	// It will output a context for downstream processes to use
 	Create(ctx context.Context) context.Context

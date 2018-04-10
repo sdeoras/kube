@@ -46,11 +46,12 @@ func TestNewCoder(t *testing.T) {
 	// initialize new kube coder
 	// key is needed because coder works with a config manager to retrieve config data
 	// and config manager requires a key to pull config data from the backend
-	coder := NewCoder(key, globalCtx)
-	if err := coder.Init(clientset, configManager); err != nil {
+	coder, err := NewCoder(key, configManager, globalCtx)
+	if err != nil {
 		log.Error(err)
 		t.Fatal(err)
 	}
+	coder.Clientset(clientset, nameSpace)
 
 	// create a context to start with
 	// note, that it is being used to trigger action when it _ends_

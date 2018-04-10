@@ -3,7 +3,9 @@ package pv
 import (
 	"context"
 
-	"github.com/sdeoras/configio"
+	"os"
+	"path/filepath"
+
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -13,12 +15,17 @@ import (
 // coder implements kube.Coder interface for a pv
 type coder struct {
 	key       string
+	namespace string
 	config    *Config
 	clientset *kubernetes.Clientset
 	ctx       context.Context
 	cancel    context.CancelFunc
 	err       error
 	log       *logrus.Entry
+}
+
+func GetDefaultConfigFile() string {
+	return filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
 }
 
 func (m *coder) Kind() kube.Kind {
@@ -33,20 +40,10 @@ func (m *coder) Error() string {
 	return m.err.Error()
 }
 
-func (m *coder) Init(clientset *kubernetes.Clientset, configReader configio.ConfigReader) error {
-
-	config := new(Config).Init(m.key)
-	if err := configReader.Unmarshal(config); err != nil {
-		return err
-	} else {
-		m.config = config
-	}
-
-	m.clientset = clientset
-
-	m.log = logrus.WithField("package", "kube/pv")
-
-	return nil
+func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
+	cdr.clientset = clientset
+	cdr.namespace = namespace
+	cdr.log = logrus.WithField("package", PackageName).WithField("namespace", cdr.namespace)
 }
 
 func (m *coder) Create(ctx context.Context) context.Context {
