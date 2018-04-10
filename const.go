@@ -10,5 +10,5 @@ const (
 )
 
 const (
-	NamespaceDefault = "default"
+	DefaultNamespace = "default"
 )
