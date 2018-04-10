@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -21,7 +22,6 @@ func TestNewCoder(t *testing.T) {
 	defer cancel()
 
 	// kubernetes clientset init
-	nameSpace := "default"
 	var clientset *kubernetes.Clientset
 	kubeConfigFile := filepath.Join(os.Getenv("HOME"), ".kube", "config")
 	// use the current context in kubeconfig
@@ -52,7 +52,7 @@ func TestNewCoder(t *testing.T) {
 		log.Error(err)
 		t.Fatal(err)
 	}
-	coder.Clientset(clientset, nameSpace)
+	coder.Clientset(clientset, kube.DefaultNamespace)
 
 	// create a context to start with
 	// note, that it is being used to trigger action when it _ends_
@@ -69,6 +69,8 @@ func TestNewCoder(t *testing.T) {
 	startFunc()
 	// wait for done
 	select {
+	case err := <-coder.Error():
+		t.Fatal(err)
 	case <-coder.Context().Done():
 		t.Fatal("coder context cancelled on error")
 	case <-done.Done():

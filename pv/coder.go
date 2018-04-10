@@ -20,7 +20,7 @@ type coder struct {
 	clientset *kubernetes.Clientset
 	ctx       context.Context
 	cancel    context.CancelFunc
-	err       error
+	err       chan error
 	log       *logrus.Entry
 }
 
@@ -28,16 +28,16 @@ func GetDefaultConfigFile() string {
 	return filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
 }
 
-func (m *coder) Kind() kube.Kind {
+func (cdr *coder) Kind() kube.Kind {
 	return kube.KindOfPv
 }
 
-func (m *coder) Context() context.Context {
-	return m.ctx
+func (cdr *coder) Context() context.Context {
+	return cdr.ctx
 }
 
-func (m *coder) Error() string {
-	return m.err.Error()
+func (cdr *coder) Error() <-chan error {
+	return cdr.err
 }
 
 func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
@@ -46,26 +46,24 @@ func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
 	cdr.log = logrus.WithField("package", PackageName).WithField("namespace", cdr.namespace)
 }
 
-func (m *coder) Create(ctx context.Context) context.Context {
-	log := m.log.WithField("func", "Create")
+func (cdr *coder) Create(ctx context.Context) context.Context {
+	log := cdr.log.WithField("func", "Create")
 	out := context.Background()
 	out, done := context.WithCancel(out)
 
 	go func(input context.Context, done context.CancelFunc) {
 		select {
 		case <-input.Done():
-			if _, err := m.clientset.CoreV1().PersistentVolumes().Create(m.config.PersistentVolume); err != nil {
+			if _, err := cdr.clientset.CoreV1().PersistentVolumes().Create(cdr.config.PersistentVolume); err != nil {
 				log.Error(err)
-				m.err = err
-				m.cancel()
-				log.Info("self context cancelled")
+				cdr.err <- err
 				return
 			} else {
 				log.Info("done")
 				done()
 				return
 			}
-		case <-m.ctx.Done():
+		case <-cdr.ctx.Done():
 			log.Info("self context done")
 			return
 		}
@@ -74,8 +72,8 @@ func (m *coder) Create(ctx context.Context) context.Context {
 	return out
 }
 
-func (m *coder) Delete(ctx context.Context) context.Context {
-	log := m.log.WithField("func", "Delete")
+func (cdr *coder) Delete(ctx context.Context) context.Context {
+	log := cdr.log.WithField("func", "Delete")
 	out := context.Background()
 	out, done := context.WithCancel(out)
 
@@ -83,18 +81,16 @@ func (m *coder) Delete(ctx context.Context) context.Context {
 		select {
 		case <-parent.Done():
 			options := new(meta_v1.DeleteOptions)
-			if err := m.clientset.CoreV1().PersistentVolumes().Delete(m.config.PersistentVolume.Name, options); err != nil {
+			if err := cdr.clientset.CoreV1().PersistentVolumes().Delete(cdr.config.PersistentVolume.Name, options); err != nil {
 				log.Error(err)
-				m.err = err
-				m.cancel()
-				log.Info("self context cancelled")
+				cdr.err <- err
 				return
 			} else {
 				log.Info("done")
 				f()
 				return
 			}
-		case <-m.ctx.Done():
+		case <-cdr.ctx.Done():
 			log.Info("self context done")
 			return
 		}

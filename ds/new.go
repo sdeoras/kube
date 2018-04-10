@@ -17,6 +17,8 @@ func newCoder(key string, configReader configio.ConfigReader, ctx context.Contex
 	cdr.key = key
 	cdr.ctx, cdr.cancel = context.WithCancel(ctx)
 
+	cdr.err = make(chan error)
+
 	config := new(Config).Init(cdr.key)
 	if err := configReader.Unmarshal(config); err != nil {
 		return nil, err

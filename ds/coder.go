@@ -20,7 +20,7 @@ type coder struct {
 	clientset *kubernetes.Clientset
 	ctx       context.Context
 	cancel    context.CancelFunc
-	err       error
+	err       chan error
 	log       *logrus.Entry
 }
 
@@ -36,8 +36,8 @@ func (cdr *coder) Context() context.Context {
 	return cdr.ctx
 }
 
-func (cdr *coder) Error() string {
-	return cdr.err.Error()
+func (cdr *coder) Error() <-chan error {
+	return cdr.err
 }
 
 func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
@@ -56,10 +56,7 @@ func (cdr *coder) Create(ctx context.Context) context.Context {
 		case <-input.Done():
 			if _, err := cdr.clientset.AppsV1beta2().DaemonSets(cdr.namespace).Create(cdr.config.DaemonSet); err != nil {
 				log.Error(err)
-				cdr.err = err
-				cdr.cancel()
-				log.Info("self context cancelled")
-				return
+				cdr.err <- err
 			} else {
 				log.Info("done")
 				done()
@@ -85,9 +82,7 @@ func (cdr *coder) Delete(ctx context.Context) context.Context {
 			options := new(meta_v1.DeleteOptions)
 			if err := cdr.clientset.AppsV1beta2().DaemonSets(cdr.namespace).Delete(cdr.config.DaemonSet.Name, options); err != nil {
 				log.Error(err)
-				cdr.err = err
-				cdr.cancel()
-				log.Info("self context cancelled")
+				cdr.err <- err
 				return
 			} else {
 				log.Info("done")

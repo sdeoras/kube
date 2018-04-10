@@ -126,6 +126,7 @@ func TestDaisyChain(t *testing.T) {
 
 	// assign clientset to kube coders
 	done := make(chan struct{})
+	errChan := make(chan error)
 	for _, coder := range coders {
 		coder := coder
 
@@ -135,6 +136,11 @@ func TestDaisyChain(t *testing.T) {
 		// fan in coder context into done
 		go func(cdr kube.Coder) {
 			done <- <-cdr.Context().Done()
+		}(coder)
+
+		// fan in coder error into errChan
+		go func(cdr kube.Coder) {
+			errChan <- <-cdr.Error()
 		}(coder)
 	}
 
@@ -158,6 +164,8 @@ func TestDaisyChain(t *testing.T) {
 	// wait for various events
 	// at least one of them will surely happen
 	select {
+	case err := <-errChan:
+		log.Fatal(err)
 	case <-trigger.Done():
 		log.Info("all done")
 	case <-done:
