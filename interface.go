@@ -10,6 +10,7 @@ import (
 )
 
 type Kind string
+type Order int
 
 type Coder interface {
 	// Kind returns kind of the object

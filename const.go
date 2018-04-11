@@ -12,3 +12,8 @@ const (
 const (
 	DefaultNamespace = "default"
 )
+
+const (
+	OrderForward Order = iota
+	OrderBackward
+)
