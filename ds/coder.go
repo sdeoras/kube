@@ -2,7 +2,6 @@ package ds
 
 import (
 	"context"
-
 	"os"
 	"path/filepath"
 
@@ -54,10 +53,15 @@ func (cdr *coder) Create(ctx context.Context) context.Context {
 	go func(input context.Context, done context.CancelFunc) {
 		select {
 		case <-input.Done():
-			if _, err := cdr.clientset.AppsV1beta2().DaemonSets(cdr.namespace).Create(cdr.config.DaemonSet); err != nil {
+			var err error
+			if cdr.config.DaemonSet, err = cdr.clientset.AppsV1beta2().DaemonSets(cdr.namespace).Create(cdr.config.DaemonSet); err != nil {
 				log.Error(err)
 				cdr.err <- err
 			} else {
+				// verifyCreate if running
+				if err := cdr.verifyCreate(); err != nil {
+					cdr.err <- err
+				}
 				log.Info("done")
 				done()
 				return
@@ -85,6 +89,10 @@ func (cdr *coder) Delete(ctx context.Context) context.Context {
 				cdr.err <- err
 				return
 			} else {
+				// verifyCreate if stopped
+				if err := cdr.verifyDelete(); err != nil {
+					cdr.err <- err
+				}
 				log.Info("done")
 				f()
 				return
