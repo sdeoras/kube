@@ -25,7 +25,8 @@ func TestLoadDefaults(t *testing.T) {
 	key := uuid.New().String()
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("HOME"), parent.DefaultConfigDir, parent.DefaultConfigFile)
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
+		parent.PackageName, "defaults", parent.DefaultConfigDir, parent.DefaultConfigFile)
 	configManager, err := configfile.NewManager(context.Background(), configfile.OptFilePath, configFilePath)
 	if err != nil {
 		t.Fatal(err)

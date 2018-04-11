@@ -2,6 +2,7 @@ package kube
 
 import "context"
 
+// Shutdown sequentially shuts down a list of coders
 func Shutdown(ctx context.Context, order Order, coders ...Coder) context.Context {
 	var trigger context.Context
 	trigger = ctx

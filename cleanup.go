@@ -5,6 +5,7 @@ import (
 	"sync"
 )
 
+// Cleanup sends delete commands to all coders and provides a channel to wait on
 func Cleanup(ctx context.Context, coders ...Coder) <-chan struct{} {
 	// shutdown all if error occurs
 	var wg sync.WaitGroup

@@ -2,6 +2,7 @@ package kube
 
 import "context"
 
+// Bootup sequentially boots a list of coders
 func Bootup(ctx context.Context, order Order, coders ...Coder) context.Context {
 	var trigger context.Context
 	trigger = ctx
