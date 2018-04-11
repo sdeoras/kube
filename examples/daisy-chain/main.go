@@ -2,9 +2,8 @@ package main
 
 import (
 	"context"
-	"time"
-
 	"flag"
+	"time"
 
 	"github.com/sdeoras/configio/configfile"
 	"github.com/sdeoras/kube"
