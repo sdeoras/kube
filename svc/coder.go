@@ -60,9 +60,9 @@ func (cdr *coder) Create(ctx context.Context) context.Context {
 				return
 			} else {
 				// verifyCreate if running
-				if err := cdr.verifyCreate(); err != nil {
+				/*if err := cdr.verifyCreate(); err != nil {
 					cdr.err <- err
-				}
+				}*/
 				log.Info("done")
 				done()
 				return
@@ -91,9 +91,9 @@ func (cdr *coder) Delete(ctx context.Context) context.Context {
 				return
 			} else {
 				// verifyCreate if deleted
-				if err := cdr.verifyDelete(); err != nil {
+				/*if err := cdr.verifyDelete(); err != nil {
 					cdr.err <- err
-				}
+				}*/
 				log.Info("done")
 				f()
 				return
