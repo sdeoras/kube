@@ -10,9 +10,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-type Kind string
-type Order int
-
 type Coder interface {
 	// Kind returns kind of the object
 	Kind() Kind
