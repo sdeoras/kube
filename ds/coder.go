@@ -2,7 +2,6 @@ package ds
 
 import (
 	"context"
-	"errors"
 
 	"github.com/sdeoras/configio"
 	"github.com/sdeoras/kube"
@@ -29,7 +28,7 @@ func (cdr *coder) Kind() kube.Kind {
 
 func (cdr *coder) SetConfig(config configio.Config) error {
 	if config, ok := config.(*Config); !ok {
-		return errors.New(kube.TypeAssertionError)
+		return kube.TypeAssertionError
 	} else {
 		cdr.config = config
 	}
