@@ -40,7 +40,7 @@ func main() {
 	errCtx, doCleanup := context.WithCancel(context.Background())
 
 	// get new kubernetes clientset from default config file
-	clientset, err := newClientset()
+	clientset, err := kube.GetDefaultClientSet()
 	if err != nil {
 		log.Fatal(err)
 	}
