@@ -14,6 +14,10 @@ const (
 )
 
 const (
-	OrderForward Order = iota
-	OrderBackward
+	Forward Order = iota
+	Backward
+)
+
+const (
+	TypeAssertionError = "input type does not match Config type of the receiver"
 )

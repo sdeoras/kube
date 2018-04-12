@@ -3,9 +3,9 @@ package pvc
 import (
 	"context"
 
-	"os"
-	"path/filepath"
+	"errors"
 
+	"github.com/sdeoras/configio"
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,12 +24,22 @@ type coder struct {
 	log       *logrus.Entry
 }
 
-func GetDefaultConfigFile() string {
-	return filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
-}
-
 func (cdr *coder) Kind() kube.Kind {
 	return kube.KindOfPvc
+}
+
+func (cdr *coder) SetConfig(config configio.Config) error {
+	if config, ok := config.(*Config); !ok {
+		return errors.New(kube.TypeAssertionError)
+	} else {
+		cdr.config = config
+	}
+
+	return nil
+}
+
+func (cdr *coder) GetConfig() configio.Config {
+	return cdr.config
 }
 
 func (cdr *coder) Context() context.Context {

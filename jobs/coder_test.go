@@ -10,9 +10,7 @@ import (
 	"github.com/sdeoras/configio/configfile"
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
-	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 func TestNewCoder(t *testing.T) {
@@ -21,23 +19,15 @@ func TestNewCoder(t *testing.T) {
 	globalCtx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	// kubernetes clientset init
-	var clientset *kubernetes.Clientset
-	kubeConfigFile := filepath.Join(os.Getenv("HOME"), ".kube", "config")
-	// use the current context in kubeconfig
-	if kubeConfig, err := clientcmd.BuildConfigFromFlags("", kubeConfigFile); err != nil {
+	clientset, err := kube.GetDefaultClientSet()
+	if err != nil {
 		t.Fatal(err)
-	} else {
-		// create the clientset
-		clientset, err = kubernetes.NewForConfig(kubeConfig)
-		if err != nil {
-			t.Fatal(err)
-		}
 	}
 
 	// config init
-	key := "567605cf-3ae7-41ef-8a49-31bb1f6bb3cc"
-	configFilePath := filepath.Join(os.Getenv("HOME"), DefaultConfigDir, DefaultConfigFile)
+	key := "d9dc03a0-3cf2-485d-9a51-1b84794644d9"
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
+		PackageName, "defaults", DefaultConfigDir, DefaultConfigFile)
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)
 	if err != nil {
 		log.Error(err)

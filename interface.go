@@ -6,6 +6,7 @@ package kube
 import (
 	"context"
 
+	"github.com/sdeoras/configio"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -15,6 +16,12 @@ type Order int
 type Coder interface {
 	// Kind returns kind of the object
 	Kind() Kind
+	// Config configures coder with provided config object
+	// It returns type assertion error if the config object type
+	// does not match the accepted type of interface implementor
+	SetConfig(config configio.Config) error
+	// GetConfig retrieves implementor's internal config object
+	GetConfig() configio.Config
 	//Context returns context of the object implementing this interface
 	Context() context.Context
 	// Error returns a channel on which internal errors are reported

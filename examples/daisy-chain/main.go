@@ -103,7 +103,7 @@ func main() {
 
 	// boot processes by passing parent context as a trigger
 	if !*shutdown {
-		trigger = kube.Bootup(trigger, kube.OrderForward, coders...)
+		trigger = kube.Bootup(trigger, kube.Forward, coders...)
 	}
 
 	/*// wait for a few seconds
@@ -112,7 +112,7 @@ func main() {
 
 	// shutdown processes in a sequence by passing parent context as trigger
 	if *shutdown {
-		trigger = kube.Shutdown(trigger, kube.OrderBackward, coders...)
+		trigger = kube.Shutdown(trigger, kube.Backward, coders...)
 	}
 
 	// arm cleanup action on coders on a trigger
