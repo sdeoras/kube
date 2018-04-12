@@ -19,5 +19,5 @@ const (
 )
 
 const (
-	TypeAssertionError Error = "input type does not match Config type of the receiver"
+	TypeAssertionError Error = "type assertion error"
 )
