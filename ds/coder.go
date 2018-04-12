@@ -11,7 +11,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// coder implements kube.Coder interface for a pvc
+// coder implements kube.Coder interface
 type coder struct {
 	key       string
 	namespace string
