@@ -8,7 +8,7 @@ import (
 )
 
 func (cdr *coder) verifyCreate() error {
-	log := cdr.log.WithField("func", "verifyCreate")
+	log := cdr.log.WithField("func", "Create/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
 		obj, err := cdr.clientset.BatchV1().Jobs(cdr.namespace).Get(cdr.config.Job.Name, *opts)
@@ -19,6 +19,9 @@ func (cdr *coder) verifyCreate() error {
 
 		if obj.Status.Active != 0 {
 			log.Warn("active:", obj.Status.Active)
+			for i, condition := range obj.Status.Conditions {
+				log.Info(i, condition.Status, condition.Message)
+			}
 		}
 
 		if obj.Status.Failed != 0 {
@@ -27,7 +30,7 @@ func (cdr *coder) verifyCreate() error {
 		}
 
 		if obj.Status.Succeeded == *cdr.config.Job.Spec.Parallelism {
-			log.Info("%d: %s", obj.Status.Succeeded, "jobs succeeded")
+			log.Infof("%d: %s", obj.Status.Succeeded, "jobs succeeded")
 			return nil
 		}
 
@@ -42,12 +45,12 @@ func (cdr *coder) verifyCreate() error {
 }
 
 func (cdr *coder) verifyDelete() error {
-	log := cdr.log.WithField("func", "verifyCreate")
+	log := cdr.log.WithField("func", "Delete/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
 		_, err := cdr.clientset.BatchV1().Jobs(cdr.namespace).Get(cdr.config.Job.Name, *opts)
 		if err != nil {
-			log.Info(err)
+			log.Info("no longer exists")
 			return nil
 		}
 

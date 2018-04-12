@@ -8,7 +8,7 @@ import (
 )
 
 func (cdr *coder) verifyCreate() error {
-	log := cdr.log.WithField("func", "verifyCreate")
+	log := cdr.log.WithField("func", "Create/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
 		obj, err := cdr.clientset.CoreV1().Services(cdr.namespace).Get(cdr.config.Svc.Name, *opts)
@@ -34,7 +34,7 @@ func (cdr *coder) verifyCreate() error {
 }
 
 func (cdr *coder) verifyDelete() error {
-	log := cdr.log.WithField("func", "verifyDelete")
+	log := cdr.log.WithField("func", "Delete/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
 		_, err := cdr.clientset.CoreV1().Services(cdr.namespace).Get(cdr.config.Svc.Name, *opts)
