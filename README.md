@@ -20,4 +20,4 @@ execution using `context.Context`. While explicit dependency management may not 
 * Boot up or shutdown on events
 
 ## Examples
-Pl. see ![this example](https://github.com/sdeoras/kube/blob/master/examples/daisy-chain/main.go) for more details
+Pl. see [this example](https://github.com/sdeoras/kube/blob/master/examples/daisy-chain/main.go) for more details
