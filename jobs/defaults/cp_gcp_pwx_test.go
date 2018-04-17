@@ -18,8 +18,8 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestLoadDefaults(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+func TestCopy_GCP_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestCopyData").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := uuid.New().String()
@@ -34,9 +34,9 @@ func TestLoadDefaults(t *testing.T) {
 
 	// params to come from outside
 	parallel := 1
-	job_id := key
-	batch_size := 100
-	num_batches := 100
+	jobId := key
+	batchSize := 100
+	numBatches := 100
 
 	// initialize params
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
@@ -55,45 +55,46 @@ func TestLoadDefaults(t *testing.T) {
 	affinity.PodAntiAffinity = new(v1.PodAntiAffinity)
 	affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution = []v1.PodAffinityTerm{*affinityTerm}
 
-	myVolume := new(v1.Volume)
-	myVolume.Name = "my-volume"
-	myVolume.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
-	myVolume.PersistentVolumeClaim.ReadOnly = true
-	myVolume.PersistentVolumeClaim.ClaimName = "my-pvc"
+	// initialize params
+	myVolGCP := new(v1.Volume)
+	myVolGCP.Name = "my-volume"
+	myVolGCP.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
+	myVolGCP.PersistentVolumeClaim.ReadOnly = true
+	myVolGCP.PersistentVolumeClaim.ClaimName = "my-pvc"
 
-	myVolume2 := new(v1.Volume)
-	myVolume2.Name = "tmp"
-	myVolume2.HostPath = new(v1.HostPathVolumeSource)
-	myVolume2.HostPath.Path = "/tmp"
+	myVolMtGCP := new(v1.VolumeMount)
+	myVolMtGCP.Name = myVolGCP.Name
+	myVolMtGCP.ReadOnly = true
+	myVolMtGCP.MountPath = "/mnt/gcp"
 
-	myVolumeMount := new(v1.VolumeMount)
-	myVolumeMount.Name = myVolume.Name
-	myVolumeMount.ReadOnly = true
-	myVolumeMount.MountPath = "/tf"
+	myVolPWX := new(v1.Volume)
+	myVolPWX.Name = "pwx-vol-1"
+	myVolPWX.PortworxVolume = new(v1.PortworxVolumeSource)
+	myVolPWX.PortworxVolume.VolumeID = myVolPWX.Name
 
-	myVolumeMount2 := new(v1.VolumeMount)
-	myVolumeMount2.Name = myVolume2.Name
-	myVolumeMount2.ReadOnly = false
-	myVolumeMount2.MountPath = "/tmp/tf"
+	myVolMtPWX := new(v1.VolumeMount)
+	myVolMtPWX.Name = myVolPWX.Name
+	myVolMtPWX.MountPath = "/mnt/pwx/"
 
 	myContainer := new(v1.Container)
 	myContainer.Name = "token-client-inception"
-	myContainer.Image = "sdeoras/token-inception:1.0.0"
+	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/tensorflow/client",
-		"--host", "token-server",
-		"--jobid", job_id,
-		"--batchsize", strconv.FormatInt(int64(batch_size), 10),
-		"--numbatches", strconv.FormatInt(int64(num_batches), 10),
-		"--inputdir", "/tf/images",
-		"--outdir", "/tmp/tf/out"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolumeMount, *myVolumeMount2}
+	myContainer.Command = []string{"/token/bin/cp",
+		"--host", "token-server:7001",
+		"--job-id", jobId,
+		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
+		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
+		"--source-dir", "/mnt/gcp/images",
+		"--destination-dir", "/mnt/pwx/token/cp/images",
+		"--out-dir", "/mnt/pwx/token/cp/out"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtPWX}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
 	podTemplateSpec.ObjectMeta.Labels["app"] = "token-client-inception"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolume, *myVolume2}
+	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 

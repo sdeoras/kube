@@ -14,7 +14,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestLoadDefaults(t *testing.T) {
+func TestServer_GCP(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
@@ -29,30 +29,39 @@ func TestLoadDefaults(t *testing.T) {
 	}
 
 	// initialize params
-	myVolume := new(v1.Volume)
-	myVolume.Name = "my-volume"
-	myVolume.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
-	myVolume.PersistentVolumeClaim.ReadOnly = true
-	myVolume.PersistentVolumeClaim.ClaimName = "my-pvc"
+	myVolGCP := new(v1.Volume)
+	myVolGCP.Name = "my-volume"
+	myVolGCP.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
+	myVolGCP.PersistentVolumeClaim.ReadOnly = true
+	myVolGCP.PersistentVolumeClaim.ClaimName = "my-pvc"
 
-	myVolumeMount := new(v1.VolumeMount)
-	myVolumeMount.Name = myVolume.Name
-	myVolumeMount.ReadOnly = true
-	myVolumeMount.MountPath = "/tf"
+	myVolMtGCP := new(v1.VolumeMount)
+	myVolMtGCP.Name = myVolGCP.Name
+	myVolMtGCP.ReadOnly = true
+	myVolMtGCP.MountPath = "/mnt/gcp"
+
+	myVolPWX := new(v1.Volume)
+	myVolPWX.Name = "pwx-vol-1"
+	myVolPWX.PortworxVolume = new(v1.PortworxVolumeSource)
+	myVolPWX.PortworxVolume.VolumeID = myVolPWX.Name
+
+	myVolMtPWX := new(v1.VolumeMount)
+	myVolMtPWX.Name = myVolPWX.Name
+	myVolMtPWX.MountPath = "/mnt/pwx/"
 
 	myContainer := new(v1.Container)
 	myContainer.Name = "token-server"
-	myContainer.Image = "sdeoras/token-server:1.0.0"
+	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/server", "--dir", "/tf/images"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolumeMount}
+	myContainer.Command = []string{"/token/bin/server", "--dir", "/mnt/gcp/images"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP}
 
 	myPodLabels := make(map[string]string)
 	myPodLabels["app"] = "token-server"
 
 	myPod := new(v1.Pod)
 	myPod.Spec.Containers = []v1.Container{*myContainer}
-	myPod.Spec.Volumes = []v1.Volume{*myVolume}
+	myPod.Spec.Volumes = []v1.Volume{*myVolGCP}
 	myPod.ObjectMeta.Name = "token-server"
 	myPod.ObjectMeta.Labels = myPodLabels
 	myPod.Spec.RestartPolicy = v1.RestartPolicyAlways
