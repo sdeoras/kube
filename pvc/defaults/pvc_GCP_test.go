@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/pvc"
 	"github.com/sirupsen/logrus"
@@ -19,22 +18,23 @@ func TestLoadDefaults(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := uuid.New().String()
+	key := "pvc_gcp"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
-		parent.PackageName, "defaults", parent.DefaultConfigDir, parent.DefaultConfigFile)
-	configManager, err := configfile.NewManager(context.Background(), configfile.OptFilePath, configFilePath)
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
+		"github.com", "sdeoras", "kube", ".config", "config.json")
+	configManager, err := configfile.NewManager(context.Background(),
+		configfile.OptFilePath, configFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// initialize params
 	config.PersistentVolumeClaim.Spec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadOnlyMany}
-	config.PersistentVolumeClaim.ObjectMeta.Name = "my-pvc"
+	config.PersistentVolumeClaim.ObjectMeta.Name = "gcp-pvc"
 	config.PersistentVolumeClaim.Spec.Resources.Requests = make(map[v1.ResourceName]resource.Quantity)
 	config.PersistentVolumeClaim.Spec.Resources.Requests[v1.ResourceStorage] = resource.MustParse("256Gi")
-	config.PersistentVolumeClaim.Spec.VolumeName = "my-pv"
+	config.PersistentVolumeClaim.Spec.VolumeName = "gcp-pv"
 
 	// write params to disk as a config file
 	if err := configManager.Marshal(config); err != nil {

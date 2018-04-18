@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/pv"
 	"github.com/sirupsen/logrus"
@@ -19,12 +18,13 @@ func TestLoadDefaults(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := uuid.New().String()
+	key := "pv_gcp"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
-		parent.PackageName, "defaults", parent.DefaultConfigDir, parent.DefaultConfigFile)
-	configManager, err := configfile.NewManager(context.Background(), configfile.OptFilePath, configFilePath)
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
+		"github.com", "sdeoras", "kube", ".config", "config.json")
+	configManager, err := configfile.NewManager(context.Background(),
+		configfile.OptFilePath, configFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func TestLoadDefaults(t *testing.T) {
 	config.PersistentVolume.Spec.GCEPersistentDisk = new(v1.GCEPersistentDiskVolumeSource)
 	config.PersistentVolume.Spec.GCEPersistentDisk.PDName = "tf-data-disk-1"
 	config.PersistentVolume.Spec.GCEPersistentDisk.ReadOnly = true
-	config.PersistentVolume.ObjectMeta.Name = "my-pv"
+	config.PersistentVolume.ObjectMeta.Name = "gcp-pv"
 	config.PersistentVolume.Spec.Capacity = make(map[v1.ResourceName]resource.Quantity)
 	config.PersistentVolume.Spec.Capacity[v1.ResourceStorage] = resource.MustParse("256Gi")
 	config.PersistentVolume.Spec.StorageClassName = "standard"

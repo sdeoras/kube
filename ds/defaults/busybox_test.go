@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/ds"
 	"github.com/sirupsen/logrus"
@@ -16,16 +15,17 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestLoadDefaults(t *testing.T) {
+func TestBusyBoxDS(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := uuid.New().String()
+	key := "busy-box-ds"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
-		parent.PackageName, "defaults", parent.DefaultConfigDir, parent.DefaultConfigFile)
-	configManager, err := configfile.NewManager(context.Background(), configfile.OptFilePath, configFilePath)
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
+		"github.com", "sdeoras", "kube", ".config", "config.json")
+	configManager, err := configfile.NewManager(context.Background(),
+		configfile.OptFilePath, configFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -35,12 +35,12 @@ func TestLoadDefaults(t *testing.T) {
 	myVolume.Name = "my-volume"
 	myVolume.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
 	myVolume.PersistentVolumeClaim.ReadOnly = true
-	myVolume.PersistentVolumeClaim.ClaimName = "my-pvc"
+	myVolume.PersistentVolumeClaim.ClaimName = "gcp-pvc"
 
 	myVolumeMount := new(v1.VolumeMount)
 	myVolumeMount.Name = myVolume.Name
 	myVolumeMount.ReadOnly = true
-	myVolumeMount.MountPath = "/tf"
+	myVolumeMount.MountPath = "/mnt/gcp"
 
 	myContainer := new(v1.Container)
 	myContainer.Name = "busybox"

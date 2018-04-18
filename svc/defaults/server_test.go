@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/svc"
 	"github.com/sirupsen/logrus"
@@ -19,12 +18,13 @@ func TestLoadDefaults(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := uuid.New().String()
+	key := "service_token_server"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
-		parent.PackageName, "defaults", parent.DefaultConfigDir, parent.DefaultConfigFile)
-	configManager, err := configfile.NewManager(context.Background(), configfile.OptFilePath, configFilePath)
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
+		"github.com", "sdeoras", "kube", ".config", "config.json")
+	configManager, err := configfile.NewManager(context.Background(),
+		configfile.OptFilePath, configFilePath)
 	if err != nil {
 		t.Fatal(err)
 	}
