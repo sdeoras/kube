@@ -17,7 +17,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestCopy_GCP(t *testing.T) {
+func TestCopy_GCP_TMP(t *testing.T) {
 	log := logrus.WithField("func", "TestCopyData").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
@@ -42,7 +42,7 @@ func TestCopy_GCP(t *testing.T) {
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"cp_gcp_tmp"}
+	selectorRequirement.Values = []string{"cp-gcp-tmp"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -86,7 +86,7 @@ func TestCopy_GCP(t *testing.T) {
 	myVolMtTMP.MountPath = "/mnt/host"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "cp_gcp_tmp"
+	myContainer.Name = "cp-gcp-tmp"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
 	myContainer.Command = []string{"/token/bin/cp",
@@ -101,14 +101,14 @@ func TestCopy_GCP(t *testing.T) {
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "cp_gcp_tmp"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "cp-gcp-tmp"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
 	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolTMP}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "cp_gcp_tmp"
+	myJob.Name = "cp-gcp-tmp"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism

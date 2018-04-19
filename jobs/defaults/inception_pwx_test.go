@@ -42,7 +42,7 @@ func TestInception_PWX(t *testing.T) {
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"token-client-inception"}
+	selectorRequirement.Values = []string{"pwx-inception"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -77,7 +77,7 @@ func TestInception_PWX(t *testing.T) {
 	myVolMtPWX.MountPath = "/mnt/pwx/"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "token-client-inception"
+	myContainer.Name = "pwx-inception"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
 	myContainer.Command = []string{"/tensorflow/inception",
@@ -91,14 +91,14 @@ func TestInception_PWX(t *testing.T) {
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "token-client-inception"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "pwx-inception"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
 	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "token-client-inception"
+	myJob.Name = "pwx-inception"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism
