@@ -35,8 +35,8 @@ func TestCopy_fio_GCP_PWX(t *testing.T) {
 	// params to come from outside
 	parallel := 1
 	jobId := key
-	batchSize := 100
-	numBatches := 100
+	batchSize := 1
+	numBatches := 1
 
 	// initialize params
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
@@ -92,6 +92,7 @@ func TestCopy_fio_GCP_PWX(t *testing.T) {
 	myContainer.Command = []string{"/token/bin/cp",
 		"--host", "token-server:7001",
 		"--job-id", jobId,
+		"--use-system-cp",
 		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
 		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
 		"--source-dir", "/mnt/gcp/fio",
