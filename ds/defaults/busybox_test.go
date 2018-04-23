@@ -32,7 +32,7 @@ func TestBusyBoxDS(t *testing.T) {
 
 	// initialize params
 	myVolume := new(v1.Volume)
-	myVolume.Name = "my-volume"
+	myVolume.Name = "gcp-pv"
 	myVolume.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
 	myVolume.PersistentVolumeClaim.ReadOnly = true
 	myVolume.PersistentVolumeClaim.ClaimName = "gcp-pvc"

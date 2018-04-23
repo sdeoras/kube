@@ -1,12 +1,12 @@
 package kube
 
 const (
-	KindOfPod Kind = "pod"
-	KindOfPv  Kind = "persistent-volume"
-	KindOfPvc Kind = "persistent-volume-claim"
-	KindOfSvc Kind = "service"
-	KindOfJob Kind = "job"
-	KindOfDs  Kind = "daemonset"
+	KindOfPod Kind = "pods"
+	KindOfPv  Kind = "pv"
+	KindOfPvc Kind = "pvc"
+	KindOfSvc Kind = "svc"
+	KindOfJob Kind = "jobs"
+	KindOfDs  Kind = "ds"
 )
 
 const (
@@ -19,5 +19,6 @@ const (
 )
 
 const (
-	TypeAssertionError Error = "type assertion error"
+	TypeAssertionError   Error = "type assertion error"
+	UnsupportedCoderKind Error = "coder kind not supported"
 )
