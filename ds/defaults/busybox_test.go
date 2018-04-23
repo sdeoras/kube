@@ -19,7 +19,7 @@ func TestBusyBoxDS(t *testing.T) {
 	log := logrus.WithField("func", "TestBusyBoxDS").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "busy-box-ds"
+	key := "busybox-ds"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
