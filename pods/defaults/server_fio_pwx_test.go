@@ -13,11 +13,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestServer_PWX(t *testing.T) {
+func TestServer_fio_PWX(t *testing.T) {
 	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "pods_server_token_pwx"
+	key := "pods_server_fio_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -53,7 +53,7 @@ func TestServer_PWX(t *testing.T) {
 	myContainer.Name = "token-server"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/token/bin/server", "--dir", "/mnt/pwx/images"}
+	myContainer.Command = []string{"/token/bin/server", "--dir", "/mnt/pwx/fio"}
 	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX}
 
 	myPodLabels := make(map[string]string)
