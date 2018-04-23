@@ -14,7 +14,7 @@ import (
 )
 
 func TestServer_fio_PWX(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestServer_fio_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "pods_server_fio_pwx"

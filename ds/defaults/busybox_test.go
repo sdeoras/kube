@@ -16,7 +16,7 @@ import (
 )
 
 func TestBusyBoxDS(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestBusyBoxDS").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "busy-box-ds"

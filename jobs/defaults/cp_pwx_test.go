@@ -18,7 +18,7 @@ import (
 )
 
 func TestCopy_PWX_TMP(t *testing.T) {
-	log := logrus.WithField("func", "TestCopyData").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestCopy_PWX_TMP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_cp_pwx_tmp"
