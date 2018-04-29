@@ -69,7 +69,6 @@ func TestBusyBoxDS(t *testing.T) {
 	myDs.Spec = apps_v1beta2.DaemonSetSpec{}
 	myDs.Spec.Template = *podTemplateSpec
 	myDs.Spec.Selector = labelSelector
-	myDs.Namespace = "busybox"
 
 	// assign to config
 	config.DaemonSet = myDs
