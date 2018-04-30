@@ -2,24 +2,23 @@ package kube
 
 import (
 	"context"
-	"fmt"
 	"sync"
 )
 
-// Shutdown shuts down a list of coders either sync or async way based on order provided
-func Shutdown(ctx context.Context, order Order, coders ...Coder) (context.Context, error) {
+// Create creates coders sequentially or in an async way
+func Create(ctx context.Context, order Order, coders ...Coder) (context.Context, error) {
 	var trigger context.Context
 	trigger = ctx
 
 	switch order {
 	case Forward:
 		for i := 0; i < len(coders); i++ {
-			trigger = coders[i].Delete(trigger)
+			trigger = coders[i].Create(trigger)
 		}
 		return trigger, nil
 	case Backward:
 		for i := len(coders) - 1; i >= 0; i-- {
-			trigger = coders[i].Delete(trigger)
+			trigger = coders[i].Create(trigger)
 		}
 		return trigger, nil
 	case Async:
@@ -28,9 +27,8 @@ func Shutdown(ctx context.Context, order Order, coders ...Coder) (context.Contex
 			coder := coder
 			wg.Add(1)
 			go func(w *sync.WaitGroup, trig context.Context, cdr Coder) {
-				fmt.Println("waiting to shutdown", cdr.GetConfig().Key())
 				select {
-				case <-cdr.Delete(trig).Done():
+				case <-cdr.Create(trig).Done():
 					w.Done()
 				}
 			}(&wg, ctx, coder)

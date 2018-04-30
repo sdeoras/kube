@@ -1,13 +1,13 @@
 package kube
 
 const (
-	KindOfNoop Kind = "noop"
-	KindOfPod  Kind = "pods"
-	KindOfPv   Kind = "pv"
-	KindOfPvc  Kind = "pvc"
-	KindOfSvc  Kind = "svc"
-	KindOfJob  Kind = "jobs"
-	KindOfDs   Kind = "ds"
+	KindOfSleep Kind = "sleep"
+	KindOfPod   Kind = "pods"
+	KindOfPv    Kind = "pv"
+	KindOfPvc   Kind = "pvc"
+	KindOfSvc   Kind = "svc"
+	KindOfJob   Kind = "jobs"
+	KindOfDs    Kind = "ds"
 )
 
 const (

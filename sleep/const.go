@@ -1,7 +1,7 @@
-package noop
+package sleep
 
 const (
-	PackageName       = "kube/noop"
+	PackageName       = "kube/sleep"
 	DefaultConfigDir  = ".config/" + PackageName
 	DefaultConfigFile = "config.json"
 )

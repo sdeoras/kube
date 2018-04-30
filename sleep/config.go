@@ -1,17 +1,19 @@
-package noop
+package sleep
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // Config wraps v1.Pod so that it can be managed using configio
 type Config struct {
-	Name  string
-	Value int
+	Name          string
+	SleepDuration time.Duration
 }
 
-func (conf *Config) Init(name string) *Config {
+func (conf *Config) Init(name string, dur time.Duration) *Config {
 	conf.Name = name
+	conf.SleepDuration = dur
 	return conf
 }
 

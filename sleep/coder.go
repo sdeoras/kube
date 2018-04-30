@@ -1,9 +1,8 @@
-package noop
+package sleep
 
 import (
 	"context"
 
-	"sync"
 	"time"
 
 	"github.com/sdeoras/configio"
@@ -11,13 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
-
-type data struct {
-	sync.Mutex
-	value int
-}
-
-var ind data
 
 // coder implements kube.Coder interface
 type coder struct {
@@ -30,7 +22,7 @@ type coder struct {
 }
 
 func (cdr *coder) Kind() kube.Kind {
-	return kube.KindOfNoop
+	return kube.KindOfSleep
 }
 
 func (cdr *coder) SetConfig(config configio.Config) error {
@@ -67,11 +59,9 @@ func (cdr *coder) Create(ctx context.Context) context.Context {
 	go func(input context.Context, done context.CancelFunc) {
 		select {
 		case <-input.Done():
-			ind.Lock()
-			cdr.config.Value = ind.value
-			ind.value += 1
-			ind.Unlock()
-			time.Sleep(time.Second)
+			if cdr.config.SleepDuration > 0 {
+				time.Sleep(cdr.config.SleepDuration)
+			}
 			log.Info("started ", cdr.config.Name)
 			done()
 		case <-cdr.ctx.Done():
@@ -91,10 +81,9 @@ func (cdr *coder) Delete(ctx context.Context) context.Context {
 	go func(parent context.Context, f context.CancelFunc) {
 		select {
 		case <-parent.Done():
-			ind.Lock()
-			ind.value -= 1
-			ind.Unlock()
-			time.Sleep(time.Second)
+			if cdr.config.SleepDuration > 0 {
+				time.Sleep(cdr.config.SleepDuration)
+			}
 			log.Info("stopped ", cdr.config.Name)
 			f()
 		case <-cdr.ctx.Done():
