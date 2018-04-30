@@ -22,7 +22,7 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// initialize new kube coder
-	coder, err := NewCoder("", nil, globalCtx)
+	coder, err := NewCoder(globalCtx, nil, "")
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)

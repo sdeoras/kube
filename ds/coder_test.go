@@ -25,9 +25,9 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// config init
-	key := "37c583c3-950e-4683-bc1c-023a2b792229"
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
-		PackageName, "defaults", DefaultConfigDir, DefaultConfigFile)
+	key := "busybox-ds"
+	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
+		"github.com", "sdeoras", "kube", ".config", "config.json")
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)
 	if err != nil {
 		log.Error(err)
@@ -37,7 +37,7 @@ func TestNewCoder(t *testing.T) {
 	// initialize new kube coder
 	// key is needed because coder works with a config manager to retrieve config data
 	// and config manager requires a key to pull config data from the backend
-	coder, err := NewCoder(key, configManager, globalCtx)
+	coder, err := NewCoder(globalCtx, configManager, key)
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)

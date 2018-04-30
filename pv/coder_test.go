@@ -37,7 +37,7 @@ func TestNewCoder(t *testing.T) {
 	// initialize new kube coder
 	// key is needed because coder works with a config manager to retrieve config data
 	// and config manager requires a key to pull config data from the backend
-	coder, err := NewCoder(key, configManager, globalCtx)
+	coder, err := NewCoder(globalCtx, configManager, key)
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)

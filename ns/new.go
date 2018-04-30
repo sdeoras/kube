@@ -1,4 +1,4 @@
-// pods implements kube.Coder interface for deployment of pods
+// ns implements kube.Coder interface for deployment of namespaces
 package ns
 
 import (
@@ -8,11 +8,11 @@ import (
 	"github.com/sdeoras/kube"
 )
 
-func NewCoder(key string, configReader configio.ConfigReader, ctx context.Context) (kube.Coder, error) {
-	return newCoder(key, configReader, ctx)
+func NewCoder(ctx context.Context, configReader configio.ConfigReader, key string) (kube.Coder, error) {
+	return newCoder(ctx, configReader, key)
 }
 
-func newCoder(key string, configReader configio.ConfigReader, ctx context.Context) (*coder, error) {
+func newCoder(ctx context.Context, configReader configio.ConfigReader, key string) (*coder, error) {
 	cdr := new(coder)
 	cdr.key = key
 	cdr.ctx, cdr.cancel = context.WithCancel(ctx)

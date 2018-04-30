@@ -21,7 +21,7 @@ func TestNewCoder(t *testing.T) {
 	coders := make([]kube.Coder, 0, 0)
 
 	for i := 0; i < 10; i++ {
-		coder, err := NewCoder(fmt.Sprintf("coder_%d", i), time.Second, globalCtx)
+		coder, err := NewCoder(globalCtx, fmt.Sprintf("coder_%d", i), time.Second)
 		if err != nil {
 			log.Error(err)
 			t.Fatal(err)
@@ -30,7 +30,7 @@ func TestNewCoder(t *testing.T) {
 		coders = append(coders, coder)
 	}
 
-	spacer, err := NewCoder("-------", 0, globalCtx)
+	spacer, err := NewCoder(globalCtx, "-------", 0)
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)
