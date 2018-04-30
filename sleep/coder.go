@@ -2,7 +2,6 @@ package sleep
 
 import (
 	"context"
-
 	"time"
 
 	"github.com/sdeoras/configio"
