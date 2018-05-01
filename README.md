@@ -9,6 +9,8 @@ package kube defines an interface called `Coder`, which is currently implemented
 * Pods provider (pod)
 * Services provider (svc)
 * Job provider (job)
+* Namespace (ns)
+* Sleeper (sleep) // a no op implementation
 
 In other words, a `kube.Coder` instance can be obtained for kubernetes functions listed above.
 
@@ -21,3 +23,17 @@ execution using `context.Context`. While explicit dependency management may not 
 
 ## Examples
 Pl. see [this example](https://github.com/sdeoras/kube/blob/master/examples/daisy-chain/main.go) for more details
+
+## Helper Functions
+several package level functions are defined to help work with coder objects
+### async creation
+several coders can deploy their create functions in async manner. Returned
+context is `done` when each of the input coders finish their contexts
+```go
+outCtx, err := Create(inCtx, Async, coders...)
+```
+### fan in
+several context objects can be grouped together to create a new context
+```go
+outCtx := FanIn(inContexts...)
+```
