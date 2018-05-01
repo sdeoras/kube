@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/sdeoras/kube"
-	"github.com/sdeoras/kube/sleep"
+	"github.com/sdeoras/kube/opt/sleep"
 	"github.com/sirupsen/logrus"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )

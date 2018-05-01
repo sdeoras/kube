@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/jobs"
+	parent "github.com/sdeoras/kube/kube/jobs/jobs"
 	"github.com/sirupsen/logrus"
 	batch_v1 "k8s.io/api/batch/v1"
 	"k8s.io/api/core/v1"
@@ -17,11 +17,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestFio_PWX_TMP(t *testing.T) {
-	log := logrus.WithField("func", "TestFio_PWX_TMP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+func TestCopy_images_GCP_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestCopy_images_GCP_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "jobs_fio_pwx_tmp"
+	key := "jobs_cp_images_gcp_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -42,7 +42,7 @@ func TestFio_PWX_TMP(t *testing.T) {
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"fio-pwx-tmp"}
+	selectorRequirement.Values = []string{"cp-images-gcp-pwx"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -86,28 +86,29 @@ func TestFio_PWX_TMP(t *testing.T) {
 	myVolMtTMP.MountPath = "/mnt/host"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "fio-pwx-tmp"
+	myContainer.Name = "cp-images-gcp-pwx"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/token/bin/fio",
+	myContainer.Command = []string{"/token/bin/cp",
 		"--host", "token-server:7001",
 		"--job-id", jobId,
 		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
 		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
-		"--source-dir", "/mnt/pwx/fio",
-		"--out-dir", "/mnt/host/gcp/token/fio/out"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX, *myVolMtTMP}
+		"--source-dir", "/mnt/gcp/images",
+		"--destination-dir", "/mnt/pwx/images",
+		"--out-dir", "/mnt/pwx/token/cp/out"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtPWX}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "fio-pwx-tmp"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "cp-images-gcp-pwx"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolPWX, *myVolTMP}
+	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "fio-pwx-tmp"
+	myJob.Name = "cp-images-gcp-pwx"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism

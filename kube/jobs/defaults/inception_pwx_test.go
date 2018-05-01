@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/jobs"
+	parent "github.com/sdeoras/kube/kube/jobs/jobs"
 	"github.com/sirupsen/logrus"
 	batch_v1 "k8s.io/api/batch/v1"
 	"k8s.io/api/core/v1"
@@ -17,11 +17,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestInception_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestInception_GCP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+func TestInception_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestInception_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "jobs_inception_gcp"
+	key := "jobs_inception_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -42,7 +42,7 @@ func TestInception_GCP(t *testing.T) {
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"gcp-inception"}
+	selectorRequirement.Values = []string{"pwx-inception"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -77,7 +77,7 @@ func TestInception_GCP(t *testing.T) {
 	myVolMtPWX.MountPath = "/mnt/pwx/"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "gcp-inception"
+	myContainer.Name = "pwx-inception"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
 	myContainer.Command = []string{"/tensorflow/inception",
@@ -85,20 +85,20 @@ func TestInception_GCP(t *testing.T) {
 		"--job-id", jobId,
 		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
 		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
-		"--input-dir", "/mnt/gcp/images",
-		"--out-dir", "/tmp/out"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP}
+		"--input-dir", "/mnt/pwx/images",
+		"--out-dir", "/mnt/pwx/out"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "gcp-inception"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "pwx-inception"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP}
+	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "gcp-inception"
+	myJob.Name = "pwx-inception"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism

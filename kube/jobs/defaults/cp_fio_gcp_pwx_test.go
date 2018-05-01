@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"strconv"
+
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/jobs"
+	parent "github.com/sdeoras/kube/kube/jobs/jobs"
 	"github.com/sirupsen/logrus"
 	batch_v1 "k8s.io/api/batch/v1"
 	"k8s.io/api/core/v1"
@@ -15,11 +17,11 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestCmd_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestCmd_GCP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+func TestCopy_fio_GCP_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestCopy_fio_GCP_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "jobs_cmd_gcp"
+	key := "jobs_cp_fio_gcp_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -32,12 +34,15 @@ func TestCmd_GCP(t *testing.T) {
 
 	// params to come from outside
 	parallel := 1
+	jobId := key
+	batchSize := 1
+	numBatches := 1
 
 	// initialize params
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"cmd-gcp"}
+	selectorRequirement.Values = []string{"cp-fio-gcp-pwx"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -81,22 +86,30 @@ func TestCmd_GCP(t *testing.T) {
 	myVolMtTMP.MountPath = "/mnt/host"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "cmd-gcp"
+	myContainer.Name = "cp-fio-gcp-pwx"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"date"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtTMP}
+	myContainer.Command = []string{"/token/bin/cp",
+		"--host", "token-server:7001",
+		"--job-id", jobId,
+		"--use-system-cp",
+		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
+		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
+		"--source-dir", "/mnt/gcp/fio",
+		"--destination-dir", "/mnt/pwx/fio",
+		"--out-dir", "/mnt/pwx/token/fio/out"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtPWX}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "cmd-gcp"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "cp-fio-gcp-pwx"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolTMP}
+	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "cmd-gcp"
+	myJob.Name = "cp-fio-gcp-pwx"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism
