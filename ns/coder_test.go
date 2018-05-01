@@ -22,30 +22,22 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// initialize new kube coder
-	coder, err := NewCoder(globalCtx, nil, "")
+	coder, err := New(globalCtx, kube.NamedNamespace)
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)
 	}
-	coder.Clientset(clientset, kube.DefaultNamespace)
-
-	config := new(Config).Init("")
-	config.Namespace.Name = "test"
-
-	if err := coder.SetConfig(config); err != nil {
-		log.Error(err)
-		t.Fatal(err)
-	}
+	coder.Clientset(clientset, kube.NamedNamespace)
 
 	// create a context to trigger with
 	// note, that it is being used to trigger action when it _ends_
 	// i.e., when startFunc() is called
 	trigger, startFunc := context.WithCancel(context.Background())
 
-	// create kube obj (akin to kubectl create -f file)
+	// create kube obj (akin to kubectl create)
 	trigger = coder.Create(trigger)
 
-	// delete kube object (akin to kubectl delete -f file)
+	// delete kube object (akin to kubectl delete)
 	trigger = coder.Delete(trigger)
 
 	// trigger it

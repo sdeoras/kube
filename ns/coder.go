@@ -23,7 +23,7 @@ type coder struct {
 }
 
 func (cdr *coder) Kind() kube.Kind {
-	return kube.KindOfPod
+	return kube.KindOfNs
 }
 
 func (cdr *coder) SetConfig(config configio.Config) error {

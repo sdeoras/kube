@@ -1,17 +1,19 @@
 package kube
 
 const (
-	KindOfSleep Kind = "sleep"
-	KindOfPod   Kind = "pods"
-	KindOfPv    Kind = "pv"
-	KindOfPvc   Kind = "pvc"
-	KindOfSvc   Kind = "svc"
-	KindOfJob   Kind = "jobs"
-	KindOfDs    Kind = "ds"
+	KindOfSleep Kind = "sleep" // sleeper, a no op
+	KindOfPod   Kind = "pods"  // pods
+	KindOfPv    Kind = "pv"    // persistent volumes
+	KindOfPvc   Kind = "pvc"   // persistent volume claims
+	KindOfSvc   Kind = "svc"   // services
+	KindOfJob   Kind = "jobs"  // jobs
+	KindOfDs    Kind = "ds"    // daemon set
+	KindOfNs    Kind = "ns"    // namespace
 )
 
 const (
 	DefaultNamespace = "default"
+	NamedNamespace   = "kube"
 )
 
 const (

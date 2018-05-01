@@ -12,6 +12,19 @@ func NewCoder(ctx context.Context, configReader configio.ConfigReader, key strin
 	return newCoder(ctx, configReader, key)
 }
 
+func New(ctx context.Context, namespace string) (kube.Coder, error) {
+	coder, err := newCoder(ctx, nil, "")
+	if err != nil {
+		return nil, err
+	}
+	config := new(Config).Init("")
+	config.Namespace.Name = namespace
+	if err := coder.SetConfig(config); err != nil {
+		return nil, err
+	}
+	return coder, nil
+}
+
 func newCoder(ctx context.Context, configReader configio.ConfigReader, key string) (*coder, error) {
 	cdr := new(coder)
 	cdr.key = key
