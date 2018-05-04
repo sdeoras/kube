@@ -25,7 +25,7 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// config init
-	key := "d9dc03a0-3cf2-485d-9a51-1b84794644d9"
+	key := "jobs_cmd_gcp"
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
 		PackageName, "defaults", DefaultConfigDir, DefaultConfigFile)
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)

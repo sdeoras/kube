@@ -25,7 +25,7 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// config init
-	key := "e1d2a37e-ba01-4b57-a35b-eefc82913e42"
+	key := "service_token_server"
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src", "github.com/sdeoras",
 		PackageName, "defaults", DefaultConfigDir, DefaultConfigFile)
 	configManager, err := configfile.NewManager(globalCtx, configfile.OptFilePath, configFilePath)
