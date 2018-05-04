@@ -17,7 +17,8 @@ import (
 )
 
 func TestFio_GCP_TMP(t *testing.T) {
-	log := logrus.WithField("func", "TestFio_GCP_TMP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestFio_GCP_TMP").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_fio_gcp_tmp"

@@ -15,7 +15,8 @@ import (
 )
 
 func TestLoadDefaults(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestLoadDefaults").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "pvc_gcp"

@@ -17,7 +17,8 @@ import (
 )
 
 func TestCopy_images_GCP_PWX(t *testing.T) {
-	log := logrus.WithField("func", "TestCopy_images_GCP_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestCopy_images_GCP_PWX").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_cp_images_gcp_pwx"

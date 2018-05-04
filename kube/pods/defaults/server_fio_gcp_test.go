@@ -14,7 +14,8 @@ import (
 )
 
 func TestServer_fio_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestServer_fio_GCP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestServer_fio_GCP").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "pods_server_fio_gcp"

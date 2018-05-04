@@ -17,7 +17,8 @@ import (
 )
 
 func TestInception_PWX(t *testing.T) {
-	log := logrus.WithField("func", "TestInception_PWX").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestInception_PWX").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_inception_pwx"

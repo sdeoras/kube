@@ -16,7 +16,8 @@ import (
 )
 
 func TestCmd_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestCmd_GCP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestCmd_GCP").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_cmd_gcp"

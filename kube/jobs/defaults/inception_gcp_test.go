@@ -17,7 +17,8 @@ import (
 )
 
 func TestInception_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestInception_GCP").WithField("package", filepath.Join(parent.PackageName, "defaults"))
+	log := logrus.WithField("func", "TestInception_GCP").
+		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
 	key := "jobs_inception_gcp"
