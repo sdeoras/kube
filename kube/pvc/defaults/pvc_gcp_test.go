@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/pvce/pvc"
+	parent "github.com/sdeoras/kube/kube/pvc"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"

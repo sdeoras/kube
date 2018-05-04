@@ -4,12 +4,11 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
-	"strconv"
-
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/jobs/jobs"
+	parent "github.com/sdeoras/kube/kube/jobs"
 	"github.com/sirupsen/logrus"
 	batch_v1 "k8s.io/api/batch/v1"
 	"k8s.io/api/core/v1"
