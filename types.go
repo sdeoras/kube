@@ -1,7 +1,7 @@
 package kube
 
 type Kind string
-type Order int
+type SyncType int
 
 type Error string
 

@@ -6,18 +6,13 @@ import (
 )
 
 // Delete shuts down a list of coders either sync or async way based on order provided
-func Delete(ctx context.Context, order Order, coders ...Coder) (context.Context, error) {
+func Delete(ctx context.Context, syncType SyncType, coders ...Coder) (context.Context, error) {
 	var trigger context.Context
 	trigger = ctx
 
-	switch order {
-	case Forward:
+	switch syncType {
+	case Sync:
 		for i := 0; i < len(coders); i++ {
-			trigger = coders[i].Delete(trigger)
-		}
-		return trigger, nil
-	case Backward:
-		for i := len(coders) - 1; i >= 0; i-- {
 			trigger = coders[i].Delete(trigger)
 		}
 		return trigger, nil
@@ -41,6 +36,6 @@ func Delete(ctx context.Context, order Order, coders ...Coder) (context.Context,
 		}(cancel, &wg)
 		return done, nil
 	default:
-		return nil, UnsupportedOrder
+		return nil, UnsupportedSync
 	}
 }

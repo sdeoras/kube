@@ -60,7 +60,7 @@ func TestNewCoder(t *testing.T) {
 	trigger, _ = kube.Create(trigger, kube.Async, coders[4:7]...)
 	trigger = spacer.Create(trigger)
 
-	trigger, _ = kube.Create(trigger, kube.Forward,
+	trigger, _ = kube.Create(trigger, kube.Sync,
 		coders[7], spacer,
 		coders[8], spacer,
 		coders[9], spacer)

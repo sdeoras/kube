@@ -17,13 +17,12 @@ const (
 )
 
 const (
-	Forward Order = iota
-	Backward
+	Sync SyncType = iota
 	Async
 )
 
 const (
 	TypeAssertionError   Error = "type assertion error"
 	UnsupportedCoderKind Error = "coder kind not supported"
-	UnsupportedOrder     Error = "unsupported exec order"
+	UnsupportedSync      Error = "unsupported sync"
 )
