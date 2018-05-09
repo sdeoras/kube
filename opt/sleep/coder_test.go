@@ -2,10 +2,9 @@ package sleep
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
-
-	"fmt"
 
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
