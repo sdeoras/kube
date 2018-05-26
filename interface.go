@@ -7,13 +7,14 @@ import (
 	"context"
 
 	"github.com/sdeoras/configio"
-	"k8s.io/client-go/kubernetes"
 )
 
+// Coder defines an interface that is primarily to be implemented by
+// kubernetes actions such as pv's, pvc's etc.
 type Coder interface {
 	// Kind returns kind of the object
 	Kind() Kind
-	// Config configures coder with provided config object
+	// SetConfig configures coder with provided config object
 	// It returns type assertion error if the config object type
 	// does not match the accepted type of interface implementor
 	SetConfig(config configio.Config) error
@@ -23,8 +24,6 @@ type Coder interface {
 	Context() context.Context
 	// Error returns a channel on which internal errors are reported
 	Error() <-chan error
-	// Clientset points to a kube clientset and a namespace
-	Clientset(clientset *kubernetes.Clientset, namespace string)
 	// Create deploys after receiving done signal from input context
 	// It will output a context for downstream processes to use
 	Create(ctx context.Context) context.Context

@@ -48,12 +48,6 @@ func (cdr *coder) Error() <-chan error {
 	return cdr.err
 }
 
-func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
-	cdr.clientset = clientset
-	cdr.namespace = namespace
-	cdr.log = logrus.WithField("package", PackageName).WithField("namespace", cdr.namespace)
-}
-
 func (cdr *coder) Create(ctx context.Context) context.Context {
 	log := cdr.log.WithField("func", "Create")
 	out := context.Background()

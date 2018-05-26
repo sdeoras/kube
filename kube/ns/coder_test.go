@@ -22,12 +22,11 @@ func TestNewCoder(t *testing.T) {
 	}
 
 	// initialize new kube coder
-	coder, err := New(globalCtx, kube.NamedNamespace)
+	coder, err := NewCoder(globalCtx, clientset, "testNamespace")
 	if err != nil {
 		log.Error(err)
 		t.Fatal(err)
 	}
-	coder.Clientset(clientset, kube.NamedNamespace)
 
 	// create a context to trigger with
 	// note, that it is being used to trigger action when it _ends_

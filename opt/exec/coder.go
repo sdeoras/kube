@@ -7,7 +7,6 @@ import (
 	"github.com/sdeoras/configio"
 	"github.com/sdeoras/kube"
 	"github.com/sirupsen/logrus"
-	"k8s.io/client-go/kubernetes"
 )
 
 // coder implements kube.Coder interface
@@ -44,10 +43,6 @@ func (cdr *coder) Context() context.Context {
 
 func (cdr *coder) Error() <-chan error {
 	return cdr.err
-}
-
-func (cdr *coder) Clientset(clientset *kubernetes.Clientset, namespace string) {
-	// no op here
 }
 
 func (cdr *coder) Create(ctx context.Context) context.Context {
