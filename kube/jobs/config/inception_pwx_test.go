@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -16,12 +16,12 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestCopy_fio_GCP_PWX(t *testing.T) {
-	log := logrus.WithField("func", "TestCopy_fio_GCP_PWX").
+func TestInception_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestInception_PWX").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "jobs_cp_fio_gcp_pwx"
+	key := "jobs_inception_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -35,14 +35,14 @@ func TestCopy_fio_GCP_PWX(t *testing.T) {
 	// params to come from outside
 	parallel := 1
 	jobId := key
-	batchSize := 1
-	numBatches := 1
+	batchSize := 100
+	numBatches := 100
 
 	// initialize params
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"cp-fio-gcp-pwx"}
+	selectorRequirement.Values = []string{"pwx-inception"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -76,40 +76,29 @@ func TestCopy_fio_GCP_PWX(t *testing.T) {
 	myVolMtPWX.Name = myVolPWX.Name
 	myVolMtPWX.MountPath = "/mnt/pwx/"
 
-	myVolTMP := new(v1.Volume)
-	myVolTMP.Name = "tmp-volume"
-	myVolTMP.HostPath = new(v1.HostPathVolumeSource)
-	myVolTMP.HostPath.Path = "/tmp"
-
-	myVolMtTMP := new(v1.VolumeMount)
-	myVolMtTMP.Name = myVolTMP.Name
-	myVolMtTMP.MountPath = "/mnt/host"
-
 	myContainer := new(v1.Container)
-	myContainer.Name = "cp-fio-gcp-pwx"
+	myContainer.Name = "pwx-inception"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/token/bin/cp",
+	myContainer.Command = []string{"/tensorflow/inception",
 		"--host", "token-server:7001",
 		"--job-id", jobId,
-		"--use-system-cp",
 		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
 		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
-		"--source-dir", "/mnt/gcp/fio",
-		"--destination-dir", "/mnt/pwx/fio",
-		"--out-dir", "/mnt/pwx/token/fio/out"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtPWX}
+		"--input-dir", "/mnt/pwx/images",
+		"--out-dir", "/mnt/pwx/out"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "cp-fio-gcp-pwx"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "pwx-inception"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolPWX}
+	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolPWX}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "cp-fio-gcp-pwx"
+	myJob.Name = "pwx-inception"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism

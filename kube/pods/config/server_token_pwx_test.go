@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -13,12 +13,12 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestServer_token_GCP(t *testing.T) {
-	log := logrus.WithField("func", "TestServer_token_GCP").
+func TestServer_token_PWX(t *testing.T) {
+	log := logrus.WithField("func", "TestServer_token_PWX").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "pods_server_token_gcp"
+	key := "pods_server_token_pwx"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -54,15 +54,15 @@ func TestServer_token_GCP(t *testing.T) {
 	myContainer.Name = "token-server"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/token/bin/server", "--dir", "/mnt/gcp/images"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP}
+	myContainer.Command = []string{"/token/bin/server", "--dir", "/mnt/pwx/images"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX}
 
 	myPodLabels := make(map[string]string)
 	myPodLabels["app"] = "token-server"
 
 	myPod := new(v1.Pod)
 	myPod.Spec.Containers = []v1.Container{*myContainer}
-	myPod.Spec.Volumes = []v1.Volume{*myVolGCP}
+	myPod.Spec.Volumes = []v1.Volume{*myVolPWX}
 	myPod.ObjectMeta.Name = "token-server"
 	myPod.ObjectMeta.Labels = myPodLabels
 	myPod.Spec.RestartPolicy = v1.RestartPolicyAlways

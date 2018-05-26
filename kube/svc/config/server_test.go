@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -7,18 +7,19 @@ import (
 	"testing"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/cm"
+	parent "github.com/sdeoras/kube/kube/svc"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestExampleCM(t *testing.T) {
-	log := logrus.WithField("func", "TestBusyBoxDS").
+func TestLoadDefaults(t *testing.T) {
+	log := logrus.WithField("func", "TestLoadDefaults").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "sample-cm"
+	key := "service_token_server"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -29,20 +30,21 @@ func TestExampleCM(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	myCm := new(v1.ConfigMap)
-	myCm.Name = "example-cm"
-	myCm.Data = make(map[string]string)
-	myCm.Annotations = make(map[string]string)
-	myCm.BinaryData = make(map[string][]byte)
+	// initialize params
+	myService := new(v1.Service)
+	myService.Name = "token-server"
+	myService.ObjectMeta.Name = "token-server"
+	myService.Spec.Selector = make(map[string]string)
+	myService.Spec.Selector["app"] = "token-server"
+	myService.Spec.Ports = []v1.ServicePort{
+		{
+			Protocol:   v1.ProtocolTCP,
+			Port:       7001,
+			TargetPort: intstr.FromInt(7001),
+		},
+	}
 
-	myCm.Data["a"] = "A"
-	myCm.Data["b"] = "B"
-	myCm.Annotations["aa"] = "AA"
-	myCm.Annotations["ab"] = "AB"
-	myCm.BinaryData["ba"] = []byte{2, 4, 6, 8}
-
-	// assign to config
-	config.ConfigMap = myCm
+	config.Svc = myService
 
 	// write params to disk as a config file
 	if err := configManager.Marshal(config); err != nil {

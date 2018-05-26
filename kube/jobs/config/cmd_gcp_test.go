@@ -1,10 +1,9 @@
-package defaults
+package config
 
 import (
 	"context"
 	"os"
 	"path/filepath"
-	"strconv"
 	"testing"
 
 	"github.com/sdeoras/configio/configfile"
@@ -16,12 +15,12 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestFio_GCP_TMP(t *testing.T) {
-	log := logrus.WithField("func", "TestFio_GCP_TMP").
+func TestCmd_GCP(t *testing.T) {
+	log := logrus.WithField("func", "TestCmd_GCP").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "jobs_fio_gcp_tmp"
+	key := "jobs_cmd_gcp"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -34,15 +33,12 @@ func TestFio_GCP_TMP(t *testing.T) {
 
 	// params to come from outside
 	parallel := 1
-	jobId := key
-	batchSize := 100
-	numBatches := 100
 
 	// initialize params
 	selectorRequirement := new(meta_v1.LabelSelectorRequirement)
 	selectorRequirement.Key = "app"
 	selectorRequirement.Operator = meta_v1.LabelSelectorOpIn
-	selectorRequirement.Values = []string{"fio-gcp-tmp"}
+	selectorRequirement.Values = []string{"cmd-gcp"}
 
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*selectorRequirement}
@@ -86,28 +82,22 @@ func TestFio_GCP_TMP(t *testing.T) {
 	myVolMtTMP.MountPath = "/mnt/host"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "fio-gcp-tmp"
+	myContainer.Name = "cmd-gcp"
 	myContainer.Image = "sdeoras/token"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"/token/bin/fio",
-		"--host", "token-server:7001",
-		"--job-id", jobId,
-		"--batch-size", strconv.FormatInt(int64(batchSize), 10),
-		"--num-batches", strconv.FormatInt(int64(numBatches), 10),
-		"--source-dir", "/mnt/gcp/fio",
-		"--out-dir", "/mnt/host/gcp/token/fio/out"}
+	myContainer.Command = []string{"date"}
 	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtGCP, *myVolMtTMP}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
-	podTemplateSpec.ObjectMeta.Labels["app"] = "fio-gcp-tmp"
+	podTemplateSpec.ObjectMeta.Labels["app"] = "cmd-gcp"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
 	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolGCP, *myVolTMP}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
 	myJob := new(batch_v1.Job)
-	myJob.Name = "fio-gcp-tmp"
+	myJob.Name = "cmd-gcp"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism

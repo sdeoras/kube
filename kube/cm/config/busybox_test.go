@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -7,19 +7,18 @@ import (
 	"testing"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/pvc"
+	parent "github.com/sdeoras/kube/kube/cm"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestLoadDefaults(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").
+func TestExampleCM(t *testing.T) {
+	log := logrus.WithField("func", "TestBusyBoxDS").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "pvc_gcp"
+	key := "sample-cm"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -30,12 +29,20 @@ func TestLoadDefaults(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// initialize params
-	config.PersistentVolumeClaim.Spec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadOnlyMany}
-	config.PersistentVolumeClaim.ObjectMeta.Name = "gcp-pvc"
-	config.PersistentVolumeClaim.Spec.Resources.Requests = make(map[v1.ResourceName]resource.Quantity)
-	config.PersistentVolumeClaim.Spec.Resources.Requests[v1.ResourceStorage] = resource.MustParse("256Gi")
-	config.PersistentVolumeClaim.Spec.VolumeName = "gcp-pv"
+	myCm := new(v1.ConfigMap)
+	myCm.Name = "example-cm"
+	myCm.Data = make(map[string]string)
+	myCm.Annotations = make(map[string]string)
+	myCm.BinaryData = make(map[string][]byte)
+
+	myCm.Data["a"] = "A"
+	myCm.Data["b"] = "B"
+	myCm.Annotations["aa"] = "AA"
+	myCm.Annotations["ab"] = "AB"
+	myCm.BinaryData["ba"] = []byte{2, 4, 6, 8}
+
+	// assign to config
+	config.ConfigMap = myCm
 
 	// write params to disk as a config file
 	if err := configManager.Marshal(config); err != nil {

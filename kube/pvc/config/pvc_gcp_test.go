@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/svc"
+	parent "github.com/sdeoras/kube/kube/pvc"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/apimachinery/pkg/api/resource"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
@@ -19,7 +19,7 @@ func TestLoadDefaults(t *testing.T) {
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "service_token_server"
+	key := "pvc_gcp"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -31,20 +31,11 @@ func TestLoadDefaults(t *testing.T) {
 	}
 
 	// initialize params
-	myService := new(v1.Service)
-	myService.Name = "token-server"
-	myService.ObjectMeta.Name = "token-server"
-	myService.Spec.Selector = make(map[string]string)
-	myService.Spec.Selector["app"] = "token-server"
-	myService.Spec.Ports = []v1.ServicePort{
-		{
-			Protocol:   v1.ProtocolTCP,
-			Port:       7001,
-			TargetPort: intstr.FromInt(7001),
-		},
-	}
-
-	config.Svc = myService
+	config.PersistentVolumeClaim.Spec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadOnlyMany}
+	config.PersistentVolumeClaim.ObjectMeta.Name = "gcp-pvc"
+	config.PersistentVolumeClaim.Spec.Resources.Requests = make(map[v1.ResourceName]resource.Quantity)
+	config.PersistentVolumeClaim.Spec.Resources.Requests[v1.ResourceStorage] = resource.MustParse("256Gi")
+	config.PersistentVolumeClaim.Spec.VolumeName = "gcp-pv"
 
 	// write params to disk as a config file
 	if err := configManager.Marshal(config); err != nil {

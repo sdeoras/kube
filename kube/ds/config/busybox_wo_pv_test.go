@@ -1,4 +1,4 @@
-package defaults
+package config
 
 import (
 	"context"
@@ -15,12 +15,12 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
-func TestBusyBoxDS(t *testing.T) {
+func TestBusyBoxWOPVDS(t *testing.T) {
 	log := logrus.WithField("func", "TestBusyBoxDS").
 		WithField("package", filepath.Join(parent.PackageName, "defaults"))
 
 	// config init
-	key := "busybox-ds"
+	key := "busybox-ds-wo-pv"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
 	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
@@ -32,29 +32,16 @@ func TestBusyBoxDS(t *testing.T) {
 	}
 
 	// initialize params
-	myVolume := new(v1.Volume)
-	myVolume.Name = "gcp-pv"
-	myVolume.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
-	myVolume.PersistentVolumeClaim.ReadOnly = true
-	myVolume.PersistentVolumeClaim.ClaimName = "gcp-pvc"
-
-	myVolumeMount := new(v1.VolumeMount)
-	myVolumeMount.Name = myVolume.Name
-	myVolumeMount.ReadOnly = true
-	myVolumeMount.MountPath = "/mnt/gcp"
-
 	myContainer := new(v1.Container)
 	myContainer.Name = "busybox"
 	myContainer.Image = "busybox"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
 	myContainer.Command = []string{"sleep", "10000"}
-	myContainer.VolumeMounts = []v1.VolumeMount{*myVolumeMount}
 
 	podTemplateSpec := new(v1.PodTemplateSpec)
 	podTemplateSpec.ObjectMeta.Labels = make(map[string]string)
 	podTemplateSpec.ObjectMeta.Labels["app"] = "busybox"
 	podTemplateSpec.Spec.Containers = []v1.Container{*myContainer}
-	podTemplateSpec.Spec.Volumes = []v1.Volume{*myVolume}
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyAlways
 
 	labelRequirement := new(meta_v1.LabelSelectorRequirement)
