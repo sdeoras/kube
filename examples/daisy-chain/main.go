@@ -24,7 +24,6 @@ func main() {
 	for i := 0; i < 10; i++ {
 		coder, err := sleep.NewCoder(globalCtx, fmt.Sprintf("coder_%d", i), time.Second)
 		if err != nil {
-			log.Error(err)
 			log.Fatal(err)
 		}
 
@@ -33,7 +32,6 @@ func main() {
 
 	spacer, err := sleep.NewCoder(globalCtx, "-------", 0)
 	if err != nil {
-		log.Error(err)
 		log.Fatal(err)
 	}
 
