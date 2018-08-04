@@ -1,0 +1,67 @@
+{
+  "kind": "DaemonSet",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "busybox",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "selector": {
+      "matchExpressions": [
+        {
+          "key": "app",
+          "operator": "In",
+          "values": [
+            "busybox"
+          ]
+        }
+      ]
+    },
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "busybox"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "gcp-nfs-pvc",
+            "persistentVolumeClaim": {
+              "claimName": "gcp-nfs-pvc",
+              "readOnly": true
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "busybox",
+            "image": "busybox",
+            "command": [
+              "sleep",
+              "10000"
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "gcp-nfs-pvc",
+                "readOnly": true,
+                "mountPath": "/mnt/nfs"
+              }
+            ],
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always"
+      }
+    },
+    "updateStrategy": {}
+  },
+  "status": {
+    "currentNumberScheduled": 0,
+    "numberMisscheduled": 0,
+    "desiredNumberScheduled": 0,
+    "numberReady": 0
+  }
+}

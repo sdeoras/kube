@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Config wraps v1.Pod so that it can be managed using configio
+// Config wraps v1.Deployment so that it can be managed using configio
 type Config struct {
 	Name          string
 	SleepDuration time.Duration

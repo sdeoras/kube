@@ -9,8 +9,7 @@ import (
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/cm"
 	"github.com/sirupsen/logrus"
-	"k8s.io/api/core/v1"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+		_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestExampleCM(t *testing.T) {
@@ -29,20 +28,16 @@ func TestExampleCM(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	myCm := new(v1.ConfigMap)
-	myCm.Name = "example-cm"
-	myCm.Data = make(map[string]string)
-	myCm.Annotations = make(map[string]string)
-	myCm.BinaryData = make(map[string][]byte)
+	config.ConfigMap.Name = "example-cm"
+	config.ConfigMap.Data = make(map[string]string)
+	config.ConfigMap.Annotations = make(map[string]string)
+	config.ConfigMap.BinaryData = make(map[string][]byte)
 
-	myCm.Data["a"] = "A"
-	myCm.Data["b"] = "B"
-	myCm.Annotations["aa"] = "AA"
-	myCm.Annotations["ab"] = "AB"
-	myCm.BinaryData["ba"] = []byte{2, 4, 6, 8}
-
-	// assign to config
-	config.ConfigMap = myCm
+	config.ConfigMap.Data["a"] = "A"
+	config.ConfigMap.Data["b"] = "B"
+	config.ConfigMap.Annotations["aa"] = "AA"
+	config.ConfigMap.Annotations["ab"] = "AB"
+	config.ConfigMap.BinaryData["ba"] = []byte{2, 4, 6, 8}
 
 	// write params to disk as a config file
 	if err := configManager.Marshal(config); err != nil {

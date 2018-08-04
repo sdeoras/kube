@@ -6,7 +6,7 @@ import (
 	apps_v1beta2 "k8s.io/api/apps/v1beta2"
 )
 
-// Config wraps v1.DaemonSet so that it can be managed using configio
+// Config wraps v1.ClusterRoleBinding so that it can be managed using configio
 type Config struct {
 	key       string
 	DaemonSet *apps_v1beta2.DaemonSet
@@ -15,6 +15,8 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.DaemonSet = new(apps_v1beta2.DaemonSet)
 	conf.key = key
+	conf.DaemonSet.Kind = Kind
+	conf.DaemonSet.APIVersion = APIVersion
 	return conf
 }
 

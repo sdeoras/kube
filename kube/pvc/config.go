@@ -14,6 +14,8 @@ type Config struct {
 
 func (conf *Config) Init(key string) *Config {
 	conf.PersistentVolumeClaim = new(v1.PersistentVolumeClaim)
+	conf.PersistentVolumeClaim.Kind = Kind
+	conf.PersistentVolumeClaim.APIVersion = APIVersion
 	conf.key = key
 	return conf
 }

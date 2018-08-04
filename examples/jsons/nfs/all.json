@@ -1,0 +1,173 @@
+{
+  "kind": "DaemonSet",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "busybox",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "selector": {
+      "matchExpressions": [
+        {
+          "key": "app",
+          "operator": "In",
+          "values": [
+            "busybox"
+          ]
+        }
+      ]
+    },
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "busybox"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "gcp-nfs-pvc",
+            "persistentVolumeClaim": {
+              "claimName": "gcp-nfs-pvc"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "busybox",
+            "image": "busybox",
+            "command": [
+              "sleep",
+              "10000"
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "gcp-nfs-pvc",
+                "mountPath": "/mnt/nfs"
+              }
+            ],
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always"
+      }
+    },
+    "updateStrategy": {}
+  },
+  "status": {
+    "currentNumberScheduled": 0,
+    "numberMisscheduled": 0,
+    "desiredNumberScheduled": 0,
+    "numberReady": 0
+  }
+}{
+  "kind": "Job",
+  "apiVersion": "batch/v1",
+  "metadata": {
+    "name": "cmd-nfs-gcp",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "parallelism": 8,
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "cmd-nfs-gcp"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "gcp-volume",
+            "persistentVolumeClaim": {
+              "claimName": "gcp-nfs-pvc"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "cmd-nfs-gcp",
+            "image": "sdeoras/token",
+            "command": [
+              "/token/bin/fio.sh",
+              "/mnt/nfs"
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "gcp-volume",
+                "mountPath": "/mnt/nfs"
+              }
+            ],
+            "imagePullPolicy": "Always"
+          }
+        ],
+        "restartPolicy": "Never",
+        "affinity": {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchExpressions": [
+                    {
+                      "key": "app",
+                      "operator": "In",
+                      "values": [
+                        "cmd-nfs-gcp"
+                      ]
+                    }
+                  ]
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {}
+}{
+  "kind": "PersistentVolume",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "gcp-nfs-pv",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "capacity": {
+      "storage": "1T"
+    },
+    "nfs": {
+      "server": "10.174.172.122",
+      "path": "/sdeoras_nfs_vol"
+    },
+    "accessModes": [
+      "ReadWriteMany"
+    ],
+    "storageClassName": "standard"
+  },
+  "status": {}
+}{
+  "kind": "PersistentVolumeClaim",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "gcp-nfs-pvc",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "accessModes": [
+      "ReadWriteMany"
+    ],
+    "resources": {
+      "requests": {
+        "storage": "1T"
+      }
+    },
+    "volumeName": "gcp-nfs-pv"
+  },
+  "status": {}
+}

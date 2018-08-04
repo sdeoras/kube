@@ -15,6 +15,8 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.ConfigMap = new(v1.ConfigMap)
 	conf.key = key
+	conf.ConfigMap.Kind = Kind
+	conf.ConfigMap.APIVersion = APIVersion
 	return conf
 }
 

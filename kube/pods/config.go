@@ -6,7 +6,7 @@ import (
 	"k8s.io/api/core/v1"
 )
 
-// Config wraps v1.Pod so that it can be managed using configio
+// Config wraps v1.Deployment so that it can be managed using configio
 type Config struct {
 	key string
 	Pod *v1.Pod
@@ -15,6 +15,8 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.Pod = new(v1.Pod)
 	conf.key = key
+	conf.Pod.Kind = Kind
+	conf.Pod.APIVersion = APIVersion
 	return conf
 }
 

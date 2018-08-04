@@ -15,6 +15,8 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.Job = new(v1.Job)
 	conf.key = key
+	conf.Job.Kind = Kind
+	conf.Job.APIVersion = APIVersion
 	return conf
 }
 

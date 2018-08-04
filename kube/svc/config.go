@@ -15,6 +15,8 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.Svc = new(v1.Service)
 	conf.key = key
+	conf.Svc.Kind = Kind
+	conf.Svc.APIVersion = APIVersion
 	return conf
 }
 

@@ -1,0 +1,22 @@
+{
+  "kind": "PersistentVolumeClaim",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "px-pvc-1",
+    "creationTimestamp": null,
+    "annotations": {
+      "volume.beta.kubernetes.io/storage-class": "portworx-sharedv4"
+    }
+  },
+  "spec": {
+    "accessModes": [
+      "ReadWriteMany"
+    ],
+    "resources": {
+      "requests": {
+        "storage": "1Gi"
+      }
+    }
+  },
+  "status": {}
+}

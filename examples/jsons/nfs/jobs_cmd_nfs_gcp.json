@@ -1,0 +1,71 @@
+{
+  "kind": "Job",
+  "apiVersion": "batch/v1",
+  "metadata": {
+    "name": "cmd-nfs-gcp",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "parallelism": 1,
+    "template": {
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "app": "cmd-nfs-gcp"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "gcp-volume",
+            "persistentVolumeClaim": {
+              "claimName": "gcp-nfs-pvc"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "cmd-nfs-gcp",
+            "image": "sdeoras/token",
+            "command": [
+              "/token/bin/fio.sh",
+              "/mnt/nfs",
+              "1",
+              "w"
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "gcp-volume",
+                "mountPath": "/mnt/nfs"
+              }
+            ],
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Never",
+        "affinity": {
+          "podAntiAffinity": {
+            "requiredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "labelSelector": {
+                  "matchExpressions": [
+                    {
+                      "key": "app",
+                      "operator": "In",
+                      "values": [
+                        "cmd-nfs-gcp"
+                      ]
+                    }
+                  ]
+                },
+                "topologyKey": "kubernetes.io/hostname"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "status": {}
+}

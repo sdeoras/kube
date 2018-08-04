@@ -1,0 +1,22 @@
+{
+  "kind": "PersistentVolume",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "gcp-nfs-pv",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "capacity": {
+      "storage": "1T"
+    },
+    "nfs": {
+      "server": "172.27.224.242",
+      "path": "/sdeoras_nfs_vol"
+    },
+    "accessModes": [
+      "ReadWriteMany"
+    ],
+    "storageClassName": "standard"
+  },
+  "status": {}
+}

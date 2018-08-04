@@ -1,0 +1,62 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "apps/v1",
+  "metadata": {
+    "name": "transferfile-deployment",
+    "creationTimestamp": null,
+    "labels": {
+      "app": "transferfile"
+    }
+  },
+  "spec": {
+    "selector": null,
+    "template": {
+      "metadata": {
+        "creationTimestamp": null
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "gcp-volume",
+            "persistentVolumeClaim": {
+              "claimName": "gcp-pvc",
+              "readOnly": true
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "transferfile",
+            "image": "lynned/server:v15",
+            "command": [
+              "./server",
+              "-p",
+              "17361",
+              "-P",
+              "portworx",
+              "-d",
+              "transferfile-deployment"
+            ],
+            "ports": [
+              {
+                "containerPort": 17361
+              }
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "gcp-volume",
+                "readOnly": true,
+                "mountPath": "/mnt/gcp"
+              }
+            ],
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always"
+      }
+    },
+    "strategy": {}
+  },
+  "status": {}
+}
