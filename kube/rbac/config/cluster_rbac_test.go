@@ -1,15 +1,16 @@
 package config
 
 import (
-	"testing"
-	"github.com/sirupsen/logrus"
-	"path/filepath"
-	"os"
-	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/rbac"
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/sdeoras/configio/configfile"
+	parent "github.com/sdeoras/kube/kube/rbac"
+	"github.com/sirupsen/logrus"
 	"k8s.io/api/rbac/v1beta1"
 )
 
@@ -29,7 +30,6 @@ func TestClusterRbac(t *testing.T) {
 		t.Fatal(err)
 	}
 
-
 	rbac := new(v1beta1.ClusterRoleBinding)
 	rbac.Kind = parent.Kind
 	rbac.APIVersion = parent.APIVersion
@@ -37,14 +37,14 @@ func TestClusterRbac(t *testing.T) {
 	rbac.Name = "cluster-rbac"
 	rbac.Subjects = []v1beta1.Subject{
 		{
-			Kind: "ServiceAccount",
-			Name: "default",
+			Kind:      "ServiceAccount",
+			Name:      "default",
 			Namespace: "default",
 		},
 	}
 	rbac.RoleRef = v1beta1.RoleRef{
-		Kind: "ClusterRole",
-		Name: "cluster-admin",
+		Kind:     "ClusterRole",
+		Name:     "cluster-admin",
 		APIGroup: "rbac.authorization.k8s.io",
 	}
 

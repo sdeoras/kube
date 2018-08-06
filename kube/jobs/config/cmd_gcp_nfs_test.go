@@ -6,6 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/jobs"
 	"github.com/sirupsen/logrus"
@@ -13,8 +16,6 @@ import (
 	"k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"encoding/json"
-	"io/ioutil"
 )
 
 func TestCmd_NFS_GCP(t *testing.T) {

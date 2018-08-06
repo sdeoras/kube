@@ -6,14 +6,15 @@ import (
 	"path/filepath"
 	"testing"
 
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/pvc"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
-		_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"encoding/json"
-	"io/ioutil"
 	"k8s.io/apimachinery/pkg/api/resource"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func Test_NFS_PVC(t *testing.T) {

@@ -2,6 +2,7 @@ package rbac
 
 import (
 	"encoding/json"
+
 	"k8s.io/api/rbac/v1beta1"
 )
 

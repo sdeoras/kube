@@ -6,14 +6,15 @@ import (
 	"path/filepath"
 	"testing"
 
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/pvc"
 	"github.com/sirupsen/logrus"
-			_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
-	"encoding/json"
-	"io/ioutil"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestPxPvcSharedV4(t *testing.T) {

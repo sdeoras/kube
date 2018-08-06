@@ -9,7 +9,7 @@ import (
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/cm"
 	"github.com/sirupsen/logrus"
-		_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestExampleCM(t *testing.T) {

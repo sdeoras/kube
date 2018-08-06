@@ -6,14 +6,15 @@ import (
 	"path/filepath"
 	"testing"
 
+	"encoding/json"
+	"io/ioutil"
+
 	"github.com/sdeoras/configio/configfile"
 	parent "github.com/sdeoras/kube/kube/pv"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-			"io/ioutil"
-	"encoding/json"
 )
 
 func Test_NFS_PV(t *testing.T) {

@@ -1,15 +1,16 @@
 package config
 
 import (
-	"testing"
-	"github.com/sirupsen/logrus"
-	"path/filepath"
-	"os"
-	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/sc"
 	"context"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/sdeoras/configio/configfile"
+	parent "github.com/sdeoras/kube/kube/sc"
+	"github.com/sirupsen/logrus"
 	"k8s.io/api/storage/v1beta1"
 )
 
@@ -28,7 +29,6 @@ func TestPxSharedv4(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
 
 	storageClass := new(v1beta1.StorageClass)
 	storageClass.Kind = parent.Kind

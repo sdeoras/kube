@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: transferfile
+  name: transferfile-deployment
+spec:
+  selector: null
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - command:
+        - ./server
+        - -p
+        - "17361"
+        - -P
+        - portworx
+        - -d
+        - transferfile-deployment
+        image: lynned/server:v15
+        imagePullPolicy: IfNotPresent
+        name: transferfile
+        ports:
+        - containerPort: 17361
+        resources: {}
+        volumeMounts:
+        - mountPath: /mnt/gcp
+          name: gcp-volume
+          readOnly: true
+      restartPolicy: Always
+      volumes:
+      - name: gcp-volume
+        persistentVolumeClaim:
+          claimName: gcp-pvc
+          readOnly: true

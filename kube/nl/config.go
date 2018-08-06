@@ -15,8 +15,6 @@ type Config struct {
 func (conf *Config) Init(key string) *Config {
 	conf.NodeList = new(v1.NodeList)
 	conf.key = key
-	conf.NodeList.Kind = Kind
-	conf.NodeList.APIVersion = APIVersion
 	return conf
 }
 

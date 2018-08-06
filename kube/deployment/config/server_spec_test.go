@@ -2,16 +2,17 @@ package config
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/deployment"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
-	"k8s.io/api/core/v1"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
+	parent "github.com/sdeoras/kube/kube/deployment"
+	"github.com/sirupsen/logrus"
+	"k8s.io/api/core/v1"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestServerSpecDeployment(t *testing.T) {
@@ -65,10 +66,10 @@ func TestServerSpecDeployment(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if b, err := json.MarshalIndent(config.Deployment, "", "  "); err != nil {
+	if b, err := kube.YAMLMarshal(config.Deployment); err != nil {
 		t.Fatal(err)
 	} else {
-		if err := ioutil.WriteFile(key+".json", b, 0644); err != nil {
+		if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
 			t.Fatal(err)
 		}
 	}
