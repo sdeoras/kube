@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: consul-load
+spec:
+  parallelism: 3
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: consul-load
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - consul-load
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - /cw
+        - --datacenter
+        - colo
+        - --encrypt
+        - A7RQdchfff2gR4dtiQcEWg==
+        - --join
+        - 70.0.42.203
+        - --join
+        - 70.0.42.204
+        - --join
+        - 70.0.42.205
+        - --
+        - /load
+        - --duration
+        - "5"
+        - --key
+        - foo/bar/baz
+        image: sdeoras/consul
+        imagePullPolicy: IfNotPresent
+        name: consul-load
+        resources: {}
+      restartPolicy: Never
+status: {}

@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: nfs-fio
+spec:
+  parallelism: 3
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nfs-fio
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - nfs-fio
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - /token/bin/fio.sh
+        - /mnt/nfs
+        - "1"
+        - wr
+        image: sdeoras/token
+        imagePullPolicy: IfNotPresent
+        name: nfs-fio
+        resources: {}
+        volumeMounts:
+        - mountPath: /mnt/nfs
+          name: gcp-volume
+          readOnly: true
+      restartPolicy: Never
+      volumes:
+      - name: gcp-volume
+        persistentVolumeClaim:
+          claimName: gcp-nfs-pvc
+          readOnly: true
+status: {}

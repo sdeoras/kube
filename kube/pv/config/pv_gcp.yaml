@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  creationTimestamp: null
+  name: gcp-pv
+spec:
+  accessModes:
+  - ReadOnlyMany
+  capacity:
+    storage: 256Gi
+  gcePersistentDisk:
+    pdName: tf-data-disk-1
+    readOnly: true
+  storageClassName: standard
+status: {}

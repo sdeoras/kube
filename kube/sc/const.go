@@ -4,7 +4,7 @@ const (
 	PackageName       = "kube/sc"
 	DefaultConfigDir  = ".config/" + PackageName
 	DefaultConfigFile = "config.json"
-	Kind              = "ClusterRoleBinding"
+	Kind              = "StorageClass"
 	APIVersion        = "storage.k8s.io/v1beta1"
 
 	AWSElasticBlockStore = "kubernetes.io/aws-ebs"

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: consul
+  name: consul
+spec:
+  selector:
+    matchLabels:
+      run: consul
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: consul
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - consul
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - consul
+        - agent
+        - -config-file
+        - /etc/consul.d/client/config.json
+        - -datacenter
+        - gcp
+        - -encrypt
+        - Bt8oLlKBztQKa8XtiJSqCQ==
+        - -join
+        - 10.138.0.2
+        - -join
+        - 10.138.0.4
+        - -join
+        - 10.138.0.6
+        image: sdeoras/consul
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - consul
+              - leave
+        name: consul-client
+        ports:
+        - containerPort: 8500
+        - containerPort: 8400
+        - containerPort: 53
+        - containerPort: 8443
+        - containerPort: 8080
+        - containerPort: 8301
+        - containerPort: 8302
+        - containerPort: 8600
+        - containerPort: 8300
+        resources: {}
+      restartPolicy: Always
+status: {}

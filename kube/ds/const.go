@@ -4,6 +4,6 @@ const (
 	PackageName       = "kube/ds"
 	DefaultConfigDir  = ".config/" + PackageName
 	DefaultConfigFile = "config.json"
-	Kind              = "ClusterRoleBinding"
+	Kind              = "DaemonSet"
 	APIVersion        = "apps/v1"
 )

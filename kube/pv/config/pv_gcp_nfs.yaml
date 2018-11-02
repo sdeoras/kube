@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  creationTimestamp: null
+  name: gcp-nfs-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1T
+  nfs:
+    path: /sdeoras_nfs_vol
+    server: 10.147.251.218
+  storageClassName: standard
+status: {}

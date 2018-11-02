@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  creationTimestamp: null
+  name: px-high-rf2
+parameters:
+  block_size: 4k
+  fs: ext4
+  priority_io: high
+  repl: "2"
+  shared: "true"
+  snap_interval: "0"
+provisioner: kubernetes.io/portworx-volume

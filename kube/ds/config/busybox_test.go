@@ -1,14 +1,12 @@
 package config
 
 import (
-	"context"
-	"os"
-	"path/filepath"
+	"io/ioutil"
 	"testing"
 
-	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
+
 	parent "github.com/sdeoras/kube/kube/ds"
-	"github.com/sirupsen/logrus"
 	apps_v1beta2 "k8s.io/api/apps/v1beta2"
 	"k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -16,20 +14,10 @@ import (
 )
 
 func TestBusyBoxDS(t *testing.T) {
-	log := logrus.WithField("func", "TestBusyBoxDS").
-		WithField("package", filepath.Join(parent.PackageName, "defaults"))
-
 	// config init
 	key := "busybox-ds"
-	log.Info(parent.PackageName, " using key: ", key)
+
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
-		"github.com", "sdeoras", "kube", ".config", "config.json")
-	configManager, err := configfile.NewManager(context.Background(),
-		configfile.OptFilePath, configFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	// initialize params
 	myVolume := new(v1.Volume)
@@ -65,17 +53,18 @@ func TestBusyBoxDS(t *testing.T) {
 	labelSelector := new(meta_v1.LabelSelector)
 	labelSelector.MatchExpressions = []meta_v1.LabelSelectorRequirement{*labelRequirement}
 
-	myDs := new(apps_v1beta2.DaemonSet)
+	myDs := config.DaemonSet
 	myDs.Name = "busybox"
 	myDs.Spec = apps_v1beta2.DaemonSetSpec{}
 	myDs.Spec.Template = *podTemplateSpec
 	myDs.Spec.Selector = labelSelector
 
-	// assign to config
-	config.DaemonSet = myDs
+	b, err := kube.YAMLMarshal(config.DaemonSet)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	// write params to disk as a config file
-	if err := configManager.Marshal(config); err != nil {
+	if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
 		t.Fatal(err)
 	}
 }

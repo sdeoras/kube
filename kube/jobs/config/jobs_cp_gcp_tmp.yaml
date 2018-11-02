@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: cp-gcp-pwx
+spec:
+  parallelism: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cp-gcp-tmp
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - cp-gcp-tmp
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - /token/bin/cp
+        - --host
+        - token-server:7001
+        - --job-id
+        - jobs_cp_gcp_tmp
+        - --batch-size
+        - "100"
+        - --num-batches
+        - "100"
+        - --source-dir
+        - /mnt/gcp/images
+        - --destination-dir
+        - /mnt/host/gcp/token/cp/images
+        - --out-dir
+        - /mnt/host/gcp/token/cp/out
+        image: sdeoras/token
+        imagePullPolicy: IfNotPresent
+        name: cp-gcp-pwx
+        resources: {}
+        volumeMounts:
+        - mountPath: /mnt/gcp
+          name: gcp-volume
+          readOnly: true
+        - mountPath: /mnt/pwx/
+          name: px-pvc-1
+      restartPolicy: Never
+      volumes:
+      - name: gcp-volume
+        persistentVolumeClaim:
+          claimName: gcp-pvc
+          readOnly: true
+      - name: px-pvc-1
+        persistentVolumeClaim:
+          claimName: px-pvc
+status: {}

@@ -8,7 +8,7 @@ import (
 	"k8s.io/api/core/v1"
 )
 
-// Config wraps v1.Deployment so that it can be managed using configio
+// Config wraps v1.Endpoints so that it can be managed using configio
 type Config struct {
 	key       string
 	Namespace *v1.Namespace

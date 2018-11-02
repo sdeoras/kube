@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"encoding/json"
 	"io/ioutil"
 
 	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
 	parent "github.com/sdeoras/kube/kube/pvc"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
@@ -48,11 +48,12 @@ func Test_NFS_PVC(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if b, err := json.MarshalIndent(config.PersistentVolumeClaim, "", "  "); err != nil {
+	b, err := kube.YAMLMarshal(config.PersistentVolumeClaim)
+	if err != nil {
 		t.Fatal(err)
-	} else {
-		if err := ioutil.WriteFile(key+".json", b, 0644); err != nil {
-			t.Fatal(err)
-		}
+	}
+
+	if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
+		t.Fatal(err)
 	}
 }

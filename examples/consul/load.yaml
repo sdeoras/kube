@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: consul-load
+  name: consul-load
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - consul
+            - consul-load
+            - consul-watch
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - command:
+    - consul
+    - agent
+    - -config-file
+    - /etc/consul.d/client/config.json
+    - -datacenter
+    - gke
+    - -encrypt
+    - $(GOSSIP_ENCRYPTION_KEY)
+    - -join
+    - consul-0.consul.$(NAMESPACE).svc.cluster.local
+    - -join
+    - consul-1.consul.$(NAMESPACE).svc.cluster.local
+    - -join
+    - consul-2.consul.$(NAMESPACE).svc.cluster.local
+    env:
+    - name: GOSSIP_ENCRYPTION_KEY
+      valueFrom:
+        secretKeyRef:
+          key: gossip-encryption-key
+          name: consul
+    - name: NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    image: sdeoras/consul
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      preStop:
+        exec:
+          command:
+          - consul
+          - leave
+    name: consul-client
+    resources: {}
+  - command:
+    - /kvdb
+    - load
+    - --count
+    - "100"
+    - --key
+    - bar/baz
+    - --prefix
+    - foo
+    - --leave
+    image: sdeoras/consul
+    imagePullPolicy: IfNotPresent
+    lifecycle:
+      preStop:
+        exec:
+          command:
+          - consul
+          - leave
+    name: consul-request
+    resources: {}
+  restartPolicy: Never
+status: {}
+
+---

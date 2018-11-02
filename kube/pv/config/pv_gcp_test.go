@@ -1,12 +1,12 @@
 package config
 
 import (
-	"context"
-	"os"
+	"io/ioutil"
 	"path/filepath"
 	"testing"
 
-	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
+
 	parent "github.com/sdeoras/kube/kube/pv"
 	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
@@ -22,13 +22,6 @@ func TestLoadDefaults(t *testing.T) {
 	key := "pv_gcp"
 	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
-		"github.com", "sdeoras", "kube", ".config", "config.json")
-	configManager, err := configfile.NewManager(context.Background(),
-		configfile.OptFilePath, configFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	// initialize params
 	config.PersistentVolume.Spec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadOnlyMany}
@@ -40,8 +33,12 @@ func TestLoadDefaults(t *testing.T) {
 	config.PersistentVolume.Spec.Capacity[v1.ResourceStorage] = resource.MustParse("256Gi")
 	config.PersistentVolume.Spec.StorageClassName = "standard"
 
-	// write params to disk as a config file
-	if err := configManager.Marshal(config); err != nil {
+	b, err := kube.YAMLMarshal(config.PersistentVolume)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
 		t.Fatal(err)
 	}
 }

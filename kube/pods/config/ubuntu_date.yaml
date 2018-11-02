@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ubuntu-date
+  name: ubuntu-date
+spec:
+  containers:
+  - command:
+    - ls
+    - -la
+    - /tmp
+    image: ubuntu
+    imagePullPolicy: IfNotPresent
+    name: ubuntu-date
+    resources: {}
+  restartPolicy: Always
+status: {}

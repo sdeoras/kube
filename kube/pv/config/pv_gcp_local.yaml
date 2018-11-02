@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  creationTimestamp: null
+  name: gcp-local-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 2G
+  local:
+    path: /tmp
+  storageClassName: standard
+status: {}

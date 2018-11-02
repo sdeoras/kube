@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: token-server
+  name: token-server
+spec:
+  containers:
+  - command:
+    - /token/bin/server
+    - --dir
+    - /mnt/gcp/imagenet/input_900
+    image: sdeoras/token
+    imagePullPolicy: IfNotPresent
+    name: token-server
+    resources: {}
+    volumeMounts:
+    - mountPath: /mnt/gcp
+      name: gcp-volume
+      readOnly: true
+  restartPolicy: Always
+  volumes:
+  - name: gcp-volume
+    persistentVolumeClaim:
+      claimName: gcp-pvc
+      readOnly: true
+status: {}

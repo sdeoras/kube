@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: consul-watch
+  name: consul-watch
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - consul-watch
+            - consul-load
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - command:
+    - /cw
+    - --datacenter
+    - colo
+    - --encrypt
+    - A7RQdchfff2gR4dtiQcEWg==
+    - --join
+    - 70.0.42.203
+    - --join
+    - 70.0.42.204
+    - --join
+    - 70.0.42.205
+    - --
+    - /watch
+    - --count
+    - "300"
+    - --key
+    - foo/bar/baz
+    image: sdeoras/consul
+    imagePullPolicy: IfNotPresent
+    name: consul-watch
+    resources: {}
+  restartPolicy: Never
+status: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: consul-load
+  name: consul-load
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - consul-load
+            - consul-watch
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - command:
+    - /cw
+    - --datacenter
+    - colo
+    - --encrypt
+    - A7RQdchfff2gR4dtiQcEWg==
+    - --join
+    - 70.0.42.203
+    - --join
+    - 70.0.42.204
+    - --join
+    - 70.0.42.205
+    - --
+    - /load
+    - --count
+    - "100"
+    - --key
+    - foo/bar/baz
+    image: sdeoras/consul
+    imagePullPolicy: IfNotPresent
+    name: consul-load
+    resources: {}
+  restartPolicy: Never
+status: {}

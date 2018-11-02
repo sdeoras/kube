@@ -1,34 +1,21 @@
 package config
 
 import (
-	"context"
-	"os"
-	"path/filepath"
+	"io/ioutil"
 	"testing"
 
-	"github.com/sdeoras/configio/configfile"
+	"github.com/sdeoras/kube"
+
 	parent "github.com/sdeoras/kube/kube/pvc"
-	"github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestLoadDefaults(t *testing.T) {
-	log := logrus.WithField("func", "TestLoadDefaults").
-		WithField("package", filepath.Join(parent.PackageName, "defaults"))
-
 	// config init
 	key := "pvc_gcp"
-	log.Info(parent.PackageName, " using key: ", key)
 	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
-		"github.com", "sdeoras", "kube", ".config", "config.json")
-	configManager, err := configfile.NewManager(context.Background(),
-		configfile.OptFilePath, configFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	// initialize params
 	config.PersistentVolumeClaim.Spec.AccessModes = []v1.PersistentVolumeAccessMode{v1.ReadOnlyMany}
@@ -37,8 +24,12 @@ func TestLoadDefaults(t *testing.T) {
 	config.PersistentVolumeClaim.Spec.Resources.Requests[v1.ResourceStorage] = resource.MustParse("256Gi")
 	config.PersistentVolumeClaim.Spec.VolumeName = "gcp-pv"
 
-	// write params to disk as a config file
-	if err := configManager.Marshal(config); err != nil {
+	b, err := kube.YAMLMarshal(config.PersistentVolumeClaim)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
 		t.Fatal(err)
 	}
 }
