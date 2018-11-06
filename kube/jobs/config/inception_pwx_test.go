@@ -1,36 +1,20 @@
 package config
 
 import (
-	"context"
-	"os"
-	"path/filepath"
+	"io/ioutil"
 	"strconv"
 	"testing"
 
-	"github.com/sdeoras/configio/configfile"
-	parent "github.com/sdeoras/kube/kube/jobs"
-	"github.com/sirupsen/logrus"
-	batch_v1 "k8s.io/api/batch/v1"
+	"github.com/sdeoras/kube"
+
+	"github.com/sdeoras/kube/kube/jobs"
 	"k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
 
 func TestInception_PWX(t *testing.T) {
-	log := logrus.WithField("func", "TestInception_PWX").
-		WithField("package", filepath.Join(parent.PackageName, "defaults"))
-
-	// config init
 	key := "jobs_inception_pwx"
-	log.Info(parent.PackageName, " using key: ", key)
-	config := new(parent.Config).Init(key)
-	configFilePath := filepath.Join(os.Getenv("GOPATH"), "src",
-		"github.com", "sdeoras", "kube", ".config", "config.json")
-	configManager, err := configfile.NewManager(context.Background(),
-		configfile.OptFilePath, configFilePath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	config := new(jobs.Config).Init(key)
 
 	// params to come from outside
 	parallel := 1
@@ -79,7 +63,7 @@ func TestInception_PWX(t *testing.T) {
 	myContainer := new(v1.Container)
 	myContainer.Name = "pwx-inception"
 	myContainer.Image = "sdeoras/token"
-	myContainer.ImagePullPolicy = v1.PullIfNotPresent
+	myContainer.ImagePullPolicy = v1.PullAlways
 	myContainer.Command = []string{"/tensorflow/inception",
 		"--host", "token-server:7001",
 		"--job-id", jobId,
@@ -97,18 +81,19 @@ func TestInception_PWX(t *testing.T) {
 	podTemplateSpec.Spec.RestartPolicy = v1.RestartPolicyNever
 	podTemplateSpec.Spec.Affinity = affinity
 
-	myJob := new(batch_v1.Job)
+	myJob := config.Job
 	myJob.Name = "pwx-inception"
 	parallelism := new(int32)
 	*parallelism = int32(parallel)
 	myJob.Spec.Parallelism = parallelism
 	myJob.Spec.Template = *podTemplateSpec
 
-	// assign to config
-	config.Job = myJob
+	b, err := kube.YAMLMarshal(config.Job)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	// write params to disk as a config file
-	if err := configManager.Marshal(config); err != nil {
+	if err := ioutil.WriteFile(key+".yaml", b, 0644); err != nil {
 		t.Fatal(err)
 	}
 }
