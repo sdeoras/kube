@@ -3,17 +3,23 @@ kind: Pod
 metadata:
   creationTimestamp: null
   labels:
-    app: ubuntu-date
-  name: ubuntu-date
+    app: sleeping
+  name: sleeping
 spec:
   containers:
   - command:
-    - ls
-    - -la
-    - /tmp
+    - sleep
+    - "10000"
     image: ubuntu
     imagePullPolicy: IfNotPresent
-    name: ubuntu-date
+    name: sleeping
     resources: {}
-  restartPolicy: Always
+    volumeMounts:
+    - mountPath: /mnt/secret
+      name: secret-volume
+  restartPolicy: Never
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: gcs-auth
 status: {}

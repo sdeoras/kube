@@ -17,31 +17,31 @@ func Test_UbuntuDate(t *testing.T) {
 	config := new(parent.Config).Init(key)
 
 	// initialize params
-	myVolPWX := new(v1.Volume)
-	myVolPWX.Name = "px-volume"
-	myVolPWX.PersistentVolumeClaim = new(v1.PersistentVolumeClaimVolumeSource)
-	myVolPWX.PersistentVolumeClaim.ClaimName = "px-pvc-1"
+	myVolSecret := new(v1.Volume)
+	myVolSecret.Name = "secret-volume"
+	myVolSecret.Secret = new(v1.SecretVolumeSource)
+	myVolSecret.Secret.SecretName = "gcs-auth"
 
-	myVolMtPWX := new(v1.VolumeMount)
-	myVolMtPWX.Name = myVolPWX.Name
-	myVolMtPWX.MountPath = "/mnt/pwx"
+	myVolMtSecret := new(v1.VolumeMount)
+	myVolMtSecret.Name = myVolSecret.Name
+	myVolMtSecret.MountPath = "/mnt/secret"
 
 	myContainer := new(v1.Container)
-	myContainer.Name = "ubuntu-date"
+	myContainer.Name = "sleeping"
 	myContainer.Image = "ubuntu"
 	myContainer.ImagePullPolicy = v1.PullIfNotPresent
-	myContainer.Command = []string{"ls", "-la", "/tmp"}
-	//myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtPWX}
+	myContainer.Command = []string{"sleep", "10000"}
+	myContainer.VolumeMounts = []v1.VolumeMount{*myVolMtSecret}
 
 	myPodLabels := make(map[string]string)
-	myPodLabels["app"] = "ubuntu-date"
+	myPodLabels["app"] = "sleeping"
 
 	myPod := config.Pod
 	myPod.Spec.Containers = []v1.Container{*myContainer}
-	//myPod.Spec.Volumes = []v1.Volume{*myVolPWX}
-	myPod.ObjectMeta.Name = "ubuntu-date"
+	myPod.Spec.Volumes = []v1.Volume{*myVolSecret}
+	myPod.ObjectMeta.Name = "sleeping"
 	myPod.ObjectMeta.Labels = myPodLabels
-	myPod.Spec.RestartPolicy = v1.RestartPolicyAlways
+	myPod.Spec.RestartPolicy = v1.RestartPolicyNever
 
 	b, err := kube.YAMLMarshal(config.Pod)
 	if err != nil {
