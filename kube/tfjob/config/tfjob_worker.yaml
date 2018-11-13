@@ -1,0 +1,16 @@
+apiVersion: kubeflow.org/v1alpha2
+kind: TFJob
+metadata:
+  creationTimestamp: null
+  name: example-job
+spec:
+  tfReplicaSpecs:
+    Worker:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers: null
+status:
+  conditions: null
+  tfReplicaStatuses: null
