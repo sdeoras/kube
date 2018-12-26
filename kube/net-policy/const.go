@@ -1,9 +1,9 @@
-package ns
+package netpolicy
 
 const (
-	PackageName       = "kube/ns"
+	PackageName       = "kube/netpolicy"
 	DefaultConfigDir  = ".config/" + PackageName
 	DefaultConfigFile = "config.json"
 	Kind              = "NetworkPolicy"
-	ApiVersion        = "v1"
+	ApiVersion        = "networking.k8s.io/v1"
 )

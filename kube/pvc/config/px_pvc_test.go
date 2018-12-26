@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/sdeoras/kube"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 
 	parent "github.com/sdeoras/kube/kube/pvc"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/sdeoras/kube"
 	parent "github.com/sdeoras/kube/kube/pods"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 )
 
 func getLoad(w io.Writer) error {

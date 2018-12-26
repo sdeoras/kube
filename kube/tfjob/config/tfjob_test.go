@@ -7,7 +7,7 @@ import (
 	"github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1alpha2"
 	"github.com/sdeoras/kube"
 	parent "github.com/sdeoras/kube/kube/tfjob"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 )
 
 func TestLoadDefaults(t *testing.T) {

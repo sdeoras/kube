@@ -92,6 +92,7 @@ k8s.io/api v0.0.0-20181216230433-16e3e9a3868f h1:132Mkru/EpzKBLLIvL1bWbLa8zIW2LM
 k8s.io/api v0.0.0-20181216230433-16e3e9a3868f/go.mod h1:iuAfoD4hCxJ8Onx9kaTIt30j7jUFS00AXQi6QMi99vA=
 k8s.io/apimachinery v0.0.0-20181203235515-3d8ee2261517 h1:p6GEgV1/cc7H0AT6XfjHwHNIypirOprIB09oKp2DQ/M=
 k8s.io/apimachinery v0.0.0-20181203235515-3d8ee2261517/go.mod h1:ccL7Eh7zubPUSh9A3USN90/OzHNSVN6zxzde07TDCL0=
+k8s.io/apimachinery v0.0.0-20181222072933-b814ad55d7c5 h1:96AWA6L4KjeldDMhG9639vpZ8VBQll1CgSAjCfEdFGI=
 k8s.io/client-go v2.0.0-alpha.0.0.20181216231014-8a775d0346c8+incompatible h1:H5m1BaT/wdqg9MAWrjEhziTv46FPjvaBO+ipsK4x/AQ=
 k8s.io/client-go v2.0.0-alpha.0.0.20181216231014-8a775d0346c8+incompatible/go.mod h1:7vJpHMYJwNQCWgzmNV+VYUl1zCObLyodBc8nIyt8L5s=
 k8s.io/kube-openapi v0.0.0-20181114233023-0317810137be h1:aWEq4nbj7HRJ0mtKYjNSk/7X28Tl6TI6FeG8gKF+r7Q=
