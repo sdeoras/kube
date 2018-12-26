@@ -37,3 +37,14 @@ several context objects can be grouped together to create a new context
 ```go
 outCtx := FanIn(inContexts...)
 ```
+
+# kubernetes version
+this pkg works with `go mod`. the dependencies have been updated for kubernetes version `kubernetes-1.11.6`. to apply
+a new version use following commands:
+```bash
+go get k8s.io/apimachinery@kubernetes-1.11.6
+go get k8s.io/client-go@kubernetes-1.11.6
+go get k8s.io/api@kubernetes-1.11.6
+go get k8s.io/klog@kubernetes-1.11.6
+go mod tidy
+```

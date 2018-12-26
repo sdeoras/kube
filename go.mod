@@ -4,8 +4,10 @@ require (
 	cloud.google.com/go v0.34.0 // indirect
 	github.com/emicklei/go-restful v2.8.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
+	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-openapi/spec v0.17.2 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
 	github.com/google/gofuzz v0.0.0-20170612174753-24818f796faf // indirect
 	github.com/google/uuid v1.1.0 // indirect
@@ -27,10 +29,8 @@ require (
 	google.golang.org/appengine v1.3.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2
-	k8s.io/api v0.0.0-20181130031204-d04500c8c3dd
-	k8s.io/apimachinery v0.0.0-20181204150028-eb8c8024849b
-	k8s.io/client-go v10.0.0+incompatible
-	k8s.io/klog v0.1.0 // indirect
+	k8s.io/api v0.0.0-20181216230433-16e3e9a3868f
+	k8s.io/apimachinery v0.0.0-20181203235515-3d8ee2261517
+	k8s.io/client-go v2.0.0-alpha.0.0.20181216231014-8a775d0346c8+incompatible
 	k8s.io/kube-openapi v0.0.0-20181114233023-0317810137be // indirect
-	sigs.k8s.io/yaml v1.1.0 // indirect
 )
