@@ -3,7 +3,7 @@ package kube
 import (
 	"encoding/json"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 func YAMLMarshal(obj interface{}) ([]byte, error) {

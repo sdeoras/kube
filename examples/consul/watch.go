@@ -7,7 +7,7 @@ import (
 
 	"github.com/sdeoras/kube"
 	"github.com/sdeoras/kube/kube/pods"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 )
 
 func getWatch(w io.Writer) error {

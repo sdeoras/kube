@@ -3,7 +3,7 @@ package pods
 import (
 	"encoding/json"
 
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 )
 
 // Config wraps v1.Endpoints so that it can be managed using configio

@@ -7,7 +7,7 @@ import (
 
 	"github.com/sdeoras/kube"
 	"github.com/sdeoras/kube/kube/statefulset"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

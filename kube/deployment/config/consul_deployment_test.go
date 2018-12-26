@@ -11,7 +11,7 @@ import (
 	"github.com/sdeoras/kube"
 	parent "github.com/sdeoras/kube/kube/deployment"
 	"github.com/sirupsen/logrus"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )

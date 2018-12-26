@@ -3,7 +3,7 @@ package jobs
 import (
 	"encoding/json"
 
-	"k8s.io/api/batch/v1"
+	v1 "k8s.io/api/batch/v1"
 )
 
 // Config wraps v1.Job so that it can be managed using configio

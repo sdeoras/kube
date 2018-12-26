@@ -1,4 +1,4 @@
-package ns
+package netpolicy
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ func (cdr *coder) verifyCreate() error {
 	log := cdr.log.WithField("func", "Create/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
-		obj, err := cdr.clientset.CoreV1().Namespaces().Get(cdr.config.Namespace.Name, *opts)
+		obj, err := cdr.clientset.CoreV1().Namespaces().Get(cdr.config.NetworkPolicy.Name, *opts)
 		if err != nil {
 			log.Error(err)
 			return err
@@ -37,7 +37,7 @@ func (cdr *coder) verifyDelete() error {
 	log := cdr.log.WithField("func", "Delete/verify")
 	opts := new(meta_v1.GetOptions)
 	for {
-		obj, err := cdr.clientset.CoreV1().Namespaces().Get(cdr.config.Namespace.Name, *opts)
+		obj, err := cdr.clientset.CoreV1().Namespaces().Get(cdr.config.NetworkPolicy.Name, *opts)
 		if err != nil {
 			log.Info(err)
 			return nil

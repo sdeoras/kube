@@ -7,7 +7,7 @@ import (
 	"github.com/sdeoras/kube"
 
 	parent "github.com/sdeoras/kube/kube/pvc"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 )
