@@ -6,7 +6,7 @@
     "creationTimestamp": null
   },
   "spec": {
-    "parallelism": 3,
+    "parallelism": 1,
     "template": {
       "metadata": {
         "creationTimestamp": null,
@@ -29,9 +29,7 @@
             "name": "cmd-nfs-gcp",
             "image": "sdeoras/token",
             "command": [
-              "ls",
-              "-la",
-              "/mnt/nfs"
+              "date"
             ],
             "resources": {},
             "volumeMounts": [

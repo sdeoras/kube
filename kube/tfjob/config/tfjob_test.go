@@ -4,7 +4,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1alpha2"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
+	"github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 	"github.com/sdeoras/kube"
 	parent "github.com/sdeoras/kube/kube/tfjob"
 	v1 "k8s.io/api/core/v1"
@@ -18,11 +19,11 @@ func TestLoadDefaults(t *testing.T) {
 	job := config.Job
 	job.Name = "example-job"
 
-	TFReplicaSpecs := make(map[v1alpha2.TFReplicaType]*v1alpha2.TFReplicaSpec)
+	TFReplicaSpecs := make(map[v1beta2.TFReplicaType]*common.ReplicaSpec)
 
-	worker := new(v1alpha2.TFReplicaSpec)
-	TFReplicaSpecs[v1alpha2.TFReplicaTypeWorker] = worker
-	job.Spec = v1alpha2.TFJobSpec{
+	worker := new(common.ReplicaSpec)
+	TFReplicaSpecs[v1beta2.TFReplicaTypeWorker] = worker
+	job.Spec = v1beta2.TFJobSpec{
 		TFReplicaSpecs: TFReplicaSpecs,
 	}
 

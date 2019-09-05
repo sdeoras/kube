@@ -10,7 +10,10 @@ spec:
         metadata:
           creationTimestamp: null
         spec:
-          containers: null
+          containers:
+          - image: gcr.io/tf-on-k8s-dogfood/tf_sample:dc944ff
+            name: tensorflow
+            resources: {}
 status:
   conditions: null
-  tfReplicaStatuses: null
+  replicaStatuses: null

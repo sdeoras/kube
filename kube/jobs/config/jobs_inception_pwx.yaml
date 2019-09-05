@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: pwx-inception
+spec:
+  parallelism: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pwx-inception
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - pwx-inception
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - /tensorflow/inception
+        - --host
+        - token-server:7001
+        - --job-id
+        - jobs_inception_pwx
+        - --batch-size
+        - "100"
+        - --num-batches
+        - "100"
+        - --input-dir
+        - /mnt/pwx/images
+        - --out-dir
+        - /mnt/pwx/out
+        image: sdeoras/token
+        imagePullPolicy: Always
+        name: pwx-inception
+        resources: {}
+        volumeMounts:
+        - mountPath: /mnt/pwx/
+          name: pwx-vol-1
+      restartPolicy: Never
+      volumes:
+      - name: pwx-vol-1
+        portworxVolume:
+          volumeID: pwx-vol-1
+status: {}

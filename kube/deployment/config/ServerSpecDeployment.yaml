@@ -37,3 +37,4 @@ spec:
         persistentVolumeClaim:
           claimName: gcp-pvc
           readOnly: true
+status: {}

@@ -3,17 +3,17 @@ package tfjob
 import (
 	"encoding/json"
 
-	"github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1alpha2"
+	"github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 )
 
 // Config wraps v1.Svc so that it can be managed using configio
 type Config struct {
 	key string
-	Job *v1alpha2.TFJob
+	Job *v1beta2.TFJob
 }
 
 func (conf *Config) Init(key string) *Config {
-	conf.Job = new(v1alpha2.TFJob)
+	conf.Job = new(v1beta2.TFJob)
 	conf.key = key
 	conf.Job.Kind = Kind
 	conf.Job.APIVersion = APIVersion
